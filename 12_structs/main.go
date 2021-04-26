@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 )
 
 // Define person struct
@@ -19,7 +18,9 @@ type Person struct {
 
 // Greeting method (value reciever)
 func (p Person) greet() string {
-	return "Hello, my name is " + p.firstName + " " + p.lastName + " and I am " + strconv.Itoa(p.age)
+	// Original return clause
+	// return "Hello, my name is " + p.firstName + " " + p.lastName + " and I am " + strconv.Itoa(p.age)
+	return fmt.Sprintf("Hello, my name is %s %s and I am %d", p.firstName, p.lastName, p.age)
 }
 
 // hasBirthday method (pointer reciever)
@@ -46,10 +47,15 @@ func main() {
 	// person1.age++
 	// fmt.Println(person1)
 
-	person1.hasBirthday()
-	person1.getMarried("Williams")
+	fmt.Println(person1.greet())
+	fmt.Println(person2.greet())
 
+	person1.hasBirthday()
+	person2.hasBirthday()
+
+	person1.getMarried("Williams")
 	person2.getMarried("Thompson")
 
+	fmt.Println(person1.greet())
 	fmt.Println(person2.greet())
 }
