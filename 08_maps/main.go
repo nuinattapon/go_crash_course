@@ -14,10 +14,14 @@ func main() {
 	// Decalre map and add kv
 	emails := map[string]string{"Bob": "bob@gmail.com", "Sharon": "sharon@gmail.com"}
 
+	// Add Mike's email
 	emails["Mike"] = "mike@gmail.com"
 
 	fmt.Println(emails)
 	fmt.Println(len(emails))
+
+	// Assign Bob the new email
+	emails["Bob"] = "bob2@gmail.com"
 	fmt.Println(emails["Bob"])
 
 	// Delete from map
