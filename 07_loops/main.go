@@ -19,13 +19,13 @@ func main() {
 	// FizzBuzz
 	for i := 1; i <= 100; i++ {
 		if i%15 == 0 {
-			fmt.Println("FizzBuzz")
+			fmt.Printf("%3d FizzBuzz\n", i)
 		} else if i%3 == 0 {
-			fmt.Println("Fizz")
+			fmt.Printf("%3d Fizz\n", i)
 		} else if i%5 == 0 {
-			fmt.Println("Buzz")
+			fmt.Printf("%3d Buzz\n", i)
 		} else {
-			fmt.Println(i)
+			fmt.Printf("%3d\n", i)
 		}
 	}
 }

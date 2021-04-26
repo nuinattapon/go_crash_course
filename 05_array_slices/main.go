@@ -12,11 +12,11 @@ func main() {
 	// fruitArr[0] = "Apple"
 	// fruitArr[1] = "Orange"
 
-	// Decalre and assign
-	// fruitArr := [2]string{"Apple", "Orange"}
+	// Declare and assign
+	fruitArr := []string{"Apple", "Orange"}
 
-	// fmt.Println(fruitArr)
-	// fmt.Println(fruitArr[1])
+	fmt.Println(fruitArr)
+	fmt.Println(fruitArr[1])
 
 	fruitSlice := []string{"Apple", "Orange", "Grape", "Cherry"}
 

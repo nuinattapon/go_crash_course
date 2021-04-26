@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	x := 10
+	x := 15
 	y := 10
 
 	//  If else
