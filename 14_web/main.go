@@ -9,12 +9,12 @@ import (
 func index(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	fmt.Fprintf(w, "<h1>Hello, 世界, สวัสดี</h1>\n")
-	fmt.Fprintf(w, "<h2>URI: %s <h2>\n", r.URL.RequestURI())
+	fmt.Fprintf(w, "<strong>URI: %s </strong>\n", r.URL.RequestURI())
 }
 
 func about(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprintf(w, "<h1>About</h1>")
+	fmt.Fprintf(w, "<strong>About</strong>")
 }
 
 func text(w http.ResponseWriter, r *http.Request) {
