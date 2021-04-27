@@ -32,8 +32,8 @@ func main() {
 					fmt.Println(err)
 					return err
 				}
-				for i := 0; i < len(ns); i++ {
-					fmt.Println(ns[i].Host)
+				for _, eachNS := range ns {
+					fmt.Println(eachNS.Host)
 				}
 				return nil
 			},
@@ -48,9 +48,8 @@ func main() {
 					fmt.Println(err)
 					return err
 				}
-				for i := 0; i < len(ip); i++ {
-					fmt.Println(ip[i])
-
+				for _, eachIP := range ip {
+					fmt.Println(eachIP)
 				}
 				return nil
 			},
@@ -81,11 +80,10 @@ func main() {
 					fmt.Println(err)
 					return err
 				}
-				for i := 0; i < len(mx); i++ {
-					fmt.Println(mx[i].Host, mx[i].Pref)
+				for _, eachMX := range mx {
+					fmt.Println(eachMX.Host, eachMX.Pref)
 				}
 				return nil
-
 			},
 		},
 	}
