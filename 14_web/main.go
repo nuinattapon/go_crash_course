@@ -4,20 +4,23 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
-func index(w http.ResponseWriter, r *http.Request) {
+var version = "1.0"
+
+func indexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	fmt.Fprintf(w, "<h1>Hello, 世界, สวัสดี</h1>\n")
 	fmt.Fprintf(w, "<strong>URI: %s </strong>\n", r.URL.RequestURI())
 }
 
-func about(w http.ResponseWriter, r *http.Request) {
+func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	fmt.Fprintf(w, "<strong>About</strong>")
 }
 
-func text(w http.ResponseWriter, r *http.Request) {
+func textHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	fmt.Fprintf(w, "Hello, 世界, สวัสดี\n")
 	fmt.Fprintln(w, "URI:", r.URL.RequestURI())
@@ -37,15 +40,27 @@ func jsonHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func versionHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	fmt.Fprintf(w, "%s\n", version)
+	fmt.Fprintln(w, "URI:", r.URL.RequestURI())
+
+}
+
 func main() {
-	http.HandleFunc("/", index)
+	http.HandleFunc("/", indexHandler)
 
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 
-	http.HandleFunc("/about", about)
-	http.HandleFunc("/text", text)
+	http.HandleFunc("/about", aboutHandler)
+	http.HandleFunc("/text", textHandler)
 	http.HandleFunc("/json", jsonHandler)
+	http.HandleFunc("/version", versionHandler)
 
-	fmt.Println("Server Starting...")
-	http.ListenAndServe(":3000", nil)
+	portID := 3000
+	s := strconv.Itoa(portID)
+
+	fmt.Printf("Server Starting at port %s...", s)
+	http.ListenAndServe(":"+s, nil)
+
 }

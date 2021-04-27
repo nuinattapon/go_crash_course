@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -8,7 +9,7 @@ import (
 )
 
 // Handler
-func hello(c echo.Context) error {
+func helloHandler(c echo.Context) error {
 	return c.HTML(http.StatusOK, "<strong>Hello, 世界, สวัสดี</strong>")
 }
 
@@ -18,14 +19,21 @@ func main() {
 
 	// Middleware
 	// e.Use(middleware.Logger())
+
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "method=${method}, uri=${uri}, status=${status}\n",
+		Format: "method=${method}, uri=${uri}, status=${status},latency=${latency_human}\n",
 	}))
+
+	// e.Use(middleware.Gzip())
 	e.Use(middleware.Recover())
 
 	// Routes
-	e.GET("/", hello)
+	e.GET("/", helloHandler)
 
 	// Start server
-	e.Logger.Fatal(e.Start(":1323"))
+	port := 1323
+	if err := e.Start(fmt.Sprintf(":%d", port)); err != nil {
+		e.Logger.Fatal(err.Error())
+	}
+
 }

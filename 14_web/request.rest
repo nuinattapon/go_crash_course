@@ -10,6 +10,9 @@ GET http://rpi4:3000/about HTTP/1.2
 GET http://rpi4:3000/text HTTP/1.2
 
 ###
+GET http://rpi4:3000/version HTTP/1.2
+
+###
 GET http://localhost:3000/ HTTP/1.2
 
 ###
@@ -22,3 +25,4 @@ GET http://localhost:3000/about HTTP/1.2
 GET http://localhost:3000/text HTTP/1.2
 
 ###
+GET http://localhost:3000/version HTTP/1.2
