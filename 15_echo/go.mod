@@ -1,4 +1,4 @@
-module 15_echo
+module github.com/nuinattapon/go_crash_course/15_echo
 
 go 1.16
 
