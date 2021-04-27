@@ -26,9 +26,9 @@ func showHostNameAndIP() error {
 	}
 	for _, eachIP := range ip {
 		if ipv4 := eachIP.To4(); ipv4 != nil {
-			fmt.Printf("IP Address is %s\n", ipv4)
+			fmt.Printf("IP Address: %s\n", ipv4)
 		} else if ipv6 := eachIP.To16(); ipv6 != nil {
-			fmt.Printf("IP Address is %s\n", ipv6)
+			fmt.Printf("IPv6 Address: %s\n", ipv6)
 
 		}
 	}
