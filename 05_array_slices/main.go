@@ -14,7 +14,7 @@ func main() {
 
 	// Declare and assign
 	fruitArr := []string{"Apple", "Orange"}
-
+	fruitArr[1] = "Banana"
 	fmt.Println(fruitArr)
 	fmt.Println(fruitArr[1])
 
@@ -22,4 +22,13 @@ func main() {
 
 	fmt.Println(len(fruitSlice))
 	fmt.Println(fruitSlice[1:3])
+
+	a := []int{1, 2, 3, 4}
+	b := a
+	b[1] = 5
+	fmt.Printf("%T\n", a)
+	fmt.Printf("%T\n", b)
+	fmt.Println(a)
+	fmt.Println(b)
+
 }
