@@ -39,23 +39,31 @@ func (p *Person) getMarried(spouseLastName string) {
 
 func main() {
 	// Init person using struct
-	person1 := Person{firstName: "Samantha", lastName: "Smith", city: "Boston", gender: "f", age: 25}
+	firstPerson := Person{firstName: "Samantha", lastName: "Smith", city: "Boston", gender: "f", age: 25}
 	// Alternative
-	person2 := Person{"Bob", "Johnson", "New York", "m", 30}
+	secondPerson := Person{"Bob", "Johnson", "New York", "m", 30}
 
-	// fmt.Println(person1.firstName)
-	// person1.age++
-	// fmt.Println(person1)
+	// fmt.Println(firstPerson.firstName)
+	fmt.Printf("firstPerson = %v\n", firstPerson)
+	firstPerson.age++
+	fmt.Printf("firstPerson = %v\n", firstPerson)
 
-	fmt.Println(person1.greet())
-	fmt.Println(person2.greet())
+	fmt.Println(firstPerson.greet())
+	fmt.Println(secondPerson.greet())
 
-	person1.hasBirthday()
-	person2.hasBirthday()
+	firstPerson.hasBirthday()
+	secondPerson.hasBirthday()
 
-	person1.getMarried("Williams")
-	person2.getMarried("Thompson")
+	firstPerson.getMarried("Williams")
+	secondPerson.getMarried("Thompson")
 
-	fmt.Println(person1.greet())
-	fmt.Println(person2.greet())
+	fmt.Println(firstPerson.greet())
+	fmt.Println(secondPerson.greet())
+
+	aDoctor := struct{ name string }{name: "John Pertwee"}
+	anotherDoctor := &aDoctor
+
+	anotherDoctor.name = "Tom Baker"
+	fmt.Println(aDoctor)
+	fmt.Println(*anotherDoctor)
 }

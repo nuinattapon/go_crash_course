@@ -28,8 +28,13 @@ func main() {
 	fmt.Printf("b: %+v, length: %+v, capacity: %+v\n", b, len(b), cap(b))
 	c := a[:len(a)-1]
 	fmt.Printf("c: %+v, length: %+v, capacity: %+v\n", c, len(c), cap(c))
-	d := append(a[:2], a[3:]...)
-	fmt.Printf("d: %+v, length: %+v, capacity: %+v\n", d, len(d), cap(d))
+	// c = append(c, 8)
+	// fmt.Printf("c: %+v, length: %+v, capacity: %+v\n", c, len(c), cap(c))
 	fmt.Printf("a: %+v, length: %+v, capacity: %+v\n", a, len(a), cap(a))
+
+	// This kind of code is discouraging
+	// d := append(a[:2], a[3:]...)
+	// fmt.Printf("d: %+v, length: %+v, capacity: %+v\n", d, len(d), cap(d))
+	// fmt.Printf("a: %+v, length: %+v, capacity: %+v\n", a, len(a), cap(a))
 
 }
