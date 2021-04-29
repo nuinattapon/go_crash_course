@@ -24,7 +24,7 @@ func main() {
 		Format: "method=${method}, uri=${uri}, status=${status},latency=${latency_human}\n",
 	}))
 
-	// e.Use(middleware.Gzip())
+	e.Use(middleware.Gzip())
 	e.Use(middleware.Recover())
 
 	// Routes

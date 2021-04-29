@@ -1,0 +1,31 @@
+GET http://rpi4:8002/users/nui HTTP/1.2
+
+###
+POST http://rpi4:8002/users HTTP/1.2
+Content-Type: application/json
+
+{"name":"Nui"}
+
+###
+GET http://rpi4:3000/about HTTP/1.2
+
+###
+GET http://rpi4:3000/text HTTP/1.2
+
+###
+GET http://rpi4:3000/version HTTP/1.2
+
+###
+GET http://localhost:3000/ HTTP/1.2
+
+###
+GET http://localhost:3000/json HTTP/1.2
+
+###
+GET http://localhost:3000/about HTTP/1.2
+
+###
+GET http://localhost:3000/text HTTP/1.2
+
+###
+GET http://localhost:3000/version HTTP/1.2
