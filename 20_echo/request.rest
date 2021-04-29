@@ -1,7 +1,7 @@
-GET http://rpi4:8002/users/nui HTTP/1.2
+GET http://rpi4:8002/users/nui HTTP/2
 
 ###
-POST http://rpi4:8002/users HTTP/1.2
+POST http://rpi4:8002/users HTTP/2
 Content-Type: application/json
 
 {"name":"Nui"}
