@@ -47,7 +47,7 @@ func Commands() {
 		Version:  "v1.0",
 		Compiled: time.Now(),
 		Authors: []*cli.Author{
-			&cli.Author{
+			{
 				Name:  "Nui Nattapon",
 				Email: "nattapon.s@pm.me",
 			},
