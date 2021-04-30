@@ -11,8 +11,13 @@ var counter = 0
 var m = sync.RWMutex{}
 
 func main() {
-	fmt.Printf("Threads: %+v\n",runtime.GOMAXPROCS(-1))
-	runtime.GOMAXPROCS(100)
+	fmt.Printf("Threads: %+v, NumCPU: %+v\n",
+		runtime.GOMAXPROCS(-1), runtime.NumCPU())
+	// UPDATE 8/28/2015: Go 1.5 is set to make the default value of GOMAXPROCS
+	// the same as the number of CPUs on your machine, so this shouldn't be a
+	// problem anymore
+
+	// runtime.GOMAXPROCS(runtime.NumCPU())
 	for i := 0; i < 10; i++ {
 		wg.Add(2)
 		m.RLock()
