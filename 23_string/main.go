@@ -1,11 +1,18 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"unicode/utf8"
+)
 
 func main() {
 
-	fmt.Println("Looping through string:")
 	s := "Hello, 世界, สวัสดี"
+
+	fmt.Printf("len(\"%s\") = %d\n", s, len(s))
+	fmt.Printf("utf8.RuneCountInString(\"%s\") = %d\n", s, utf8.RuneCountInString(s))
+
+	fmt.Println("\nLooping through s:")
 	for k, v := range s {
 		fmt.Println(k, string(v))
 	}
