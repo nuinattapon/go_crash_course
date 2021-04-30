@@ -1,0 +1,21 @@
+### GET all books
+GET http://rpi4:8000/books HTTP/1.1
+
+### GET book 1
+GET http://rpi4:8000/books/1 HTTP/1.1
+
+### ADD a Book
+POST http://rpi4:8000/books HTTP/1.2
+Content-Type: application/json
+
+{"isbn":"4545454","title":"Book Three","author":{"firstname":"Harry",  "lastname":"White"}}
+
+### Delete a book
+DELETE http://rpi4:8000/books/98498081 HTTP/1.2
+
+### Update a book
+PUT http://rpi4:8000/books/1 HTTP/1.2
+Content-Type: application/json
+
+{"isbn":"4545454","title":"Book Three","author":{"firstname":"Harry",  "lastname":"White"}}
+
