@@ -18,8 +18,6 @@ type Person struct {
 
 // Greeting method (value reciever)
 func (p Person) greet() string {
-	// Original return clause
-	// return "Hello, my name is " + p.firstName + " " + p.lastName + " and I am " + strconv.Itoa(p.age)
 	return fmt.Sprintf("Hello, my name is %s %s and I am %d", p.firstName, p.lastName, p.age)
 }
 
