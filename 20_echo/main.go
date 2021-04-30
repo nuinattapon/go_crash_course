@@ -88,5 +88,9 @@ func main() {
 	e.POST("/users", UserPostHandler)
 
 	// Start echo and handle errors
-	e.Logger.Fatal(e.Start(":8002"))
+	// Start server
+	port := 8002
+	if err := e.Start(fmt.Sprintf(":%d", port)); err != nil {
+		e.Logger.Fatal(err.Error())
+	}
 }
