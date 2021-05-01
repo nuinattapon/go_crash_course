@@ -2,34 +2,45 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"sync"
 	"time"
 )
 
 func main() {
 	start := time.Now()
+	rand.Seed(time.Now().UnixNano())
+
+	// Set up a done channel that's shared by the whole pipeline,
+	// and close that channel when this pipeline exits, as a signal
+	// for all the goroutines we started to exit.
+	done := make(chan struct{}, 4)
+	defer close(done)
 
 	in := gen()
 
 	// FAN OUT
 	// Multiple functions reading from the same channel until that channel is closed
 	// Distribute work across multiple functions (ten goroutines) that all read from in.
-	c0 := fibonacci(in)
-	c1 := fibonacci(in)
-	c2 := fibonacci(in)
-	c3 := fibonacci(in)
-	c4 := fibonacci(in)
-	c5 := fibonacci(in)
-	c6 := fibonacci(in)
-	c7 := fibonacci(in)
-	c8 := fibonacci(in)
-	c9 := fibonacci(in)
+	c0 := fibonacci(done, in)
+	c1 := fibonacci(done, in)
+	c2 := fibonacci(done, in)
+	c3 := fibonacci(done, in)
+
+	// Tell the remaining senders we're leaving.
+	// go func(n int) {
+	// 	time.Sleep(time.Duration(n) * time.Millisecond)
+	// 	done <- struct{}{}
+	// 	done <- struct{}{}
+	// 	done <- struct{}{}
+	// 	done <- struct{}{}
+	// }(10)
 
 	// FAN IN
 	// multiplex multiple channels onto a single channel
 	// merge the channels from c0 through c9 onto a single channel
 	var y int
-	for n := range merge(c0, c1, c2, c3, c4, c5, c6, c7, c8, c9) {
+	for n := range merge(done, c0, c1, c2, c3) {
 		y++
 		fmt.Println(y, "\t", n)
 	}
@@ -41,8 +52,8 @@ func main() {
 func gen() <-chan int {
 	out := make(chan int)
 	go func() {
-		for i := 0; i < 15; i++ {
-			for j := 1; j < 76; j++ {
+		for i := 0; i < 100; i++ {
+			for j := 1; j < 20; j++ {
 				out <- j
 			}
 		}
@@ -51,13 +62,17 @@ func gen() <-chan int {
 	return out
 }
 
-func fibonacci(in <-chan int) <-chan int {
+func fibonacci(done <-chan struct{}, in <-chan int) <-chan int {
 	out := make(chan int)
 	go func() {
+		defer close(out)
 		for n := range in {
-			out <- fib(n)
+			select {
+			case out <- fact(n):
+			case <-done:
+				return
+			}
 		}
-		close(out)
 	}()
 	return out
 }
@@ -84,15 +99,20 @@ func fib(n int) int {
 	return f[n]
 }
 
-func merge(cs ...<-chan int) <-chan int {
+func merge(done <-chan struct{}, cs ...<-chan int) <-chan int {
 	var wg sync.WaitGroup
 	out := make(chan int)
 
 	output := func(c <-chan int) {
+		defer wg.Done()
+
 		for n := range c {
-			out <- n
+			select {
+			case out <- n:
+			case <-done:
+				return
+			}
 		}
-		wg.Done()
 	}
 
 	wg.Add(len(cs))
