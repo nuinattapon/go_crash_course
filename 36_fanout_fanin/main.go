@@ -3,25 +3,27 @@ package main
 import (
 	"fmt"
 	"sync"
+	"time"
 )
 
 func main() {
+	start := time.Now()
 
 	in := gen()
 
 	// FAN OUT
 	// Multiple functions reading from the same channel until that channel is closed
 	// Distribute work across multiple functions (ten goroutines) that all read from in.
-	c0 := factorial(in)
-	c1 := factorial(in)
-	c2 := factorial(in)
-	c3 := factorial(in)
-	c4 := factorial(in)
-	c5 := factorial(in)
-	c6 := factorial(in)
-	c7 := factorial(in)
-	c8 := factorial(in)
-	c9 := factorial(in)
+	c0 := fibonacci(in)
+	c1 := fibonacci(in)
+	c2 := fibonacci(in)
+	c3 := fibonacci(in)
+	c4 := fibonacci(in)
+	c5 := fibonacci(in)
+	c6 := fibonacci(in)
+	c7 := fibonacci(in)
+	c8 := fibonacci(in)
+	c9 := fibonacci(in)
 
 	// FAN IN
 	// multiplex multiple channels onto a single channel
@@ -31,14 +33,16 @@ func main() {
 		y++
 		fmt.Println(y, "\t", n)
 	}
+	elapsed := time.Since(start)
+	fmt.Printf("Elapsed %d ms\n", elapsed.Milliseconds())
 
 }
 
 func gen() <-chan int {
 	out := make(chan int)
 	go func() {
-		for i := 0; i < 100; i++ {
-			for j := 3; j < 13; j++ {
+		for i := 0; i < 15; i++ {
+			for j := 1; j < 76; j++ {
 				out <- j
 			}
 		}
@@ -47,11 +51,11 @@ func gen() <-chan int {
 	return out
 }
 
-func factorial(in <-chan int) <-chan int {
+func fibonacci(in <-chan int) <-chan int {
 	out := make(chan int)
 	go func() {
 		for n := range in {
-			out <- fact(n)
+			out <- fib(n)
 		}
 		close(out)
 	}()
@@ -64,6 +68,20 @@ func fact(n int) int {
 		total *= i
 	}
 	return total
+}
+
+// Fast fib
+func fib(n int) int {
+	f := make([]int, n+1, n+2)
+	if n < 2 {
+		f = f[0:2]
+	}
+	f[0] = 0
+	f[1] = 1
+	for i := 2; i <= n; i++ {
+		f[i] = f[i-1] + f[i-2]
+	}
+	return f[n]
 }
 
 func merge(cs ...<-chan int) <-chan int {
