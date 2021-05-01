@@ -15,7 +15,7 @@ func main() {
 	// fmt.Printf("%+v\n", d)
 	// fmt.Printf("%+v\n", e)
 
-	// a := make([]int, 3, 100)
+	// a := make([]int, 3, 100) // This is sutable for bigger slice - preallocate 100 slots
 	a := []int{} // This is suitable for small size slice
 	fmt.Printf("a: %+v, length: %+v, capacity: %+v\n", a, len(a), cap(a))
 	a = append(a, 1)

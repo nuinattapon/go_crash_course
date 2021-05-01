@@ -5,6 +5,7 @@ import "fmt"
 func main() {
 	// Define map
 	// emails := make(map[string]string)
+
 	//  Assign kv
 	// emails["Bob"] = "bob@gmail.com"
 	// emails["Sharon"] = "sharon@gmail.com"
@@ -16,19 +17,16 @@ func main() {
 	emails["Mike"] = "mike@gmail.com"
 
 	fmt.Printf("emails: %+v\n", emails)
-	fmt.Printf("emails size: %+v\n", len(emails))
+	fmt.Println(len(emails))
 
 	// Assign Bob the new email
 	emails["Bob"] = "bob2@gmail.com"
-	fmt.Printf("emails: %+v\n", emails)
-
 	fmt.Println(emails["Bob"])
 
 	// Delete from map
 	delete(emails, "Bob")
 	fmt.Println(emails)
 
-	delete(emails, "Nui")
 	if email, ok := emails["Bob"]; ok {
 		fmt.Printf("Bob's email: %+v\n", email)
 	}
