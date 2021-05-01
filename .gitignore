@@ -17,3 +17,4 @@ vendor/
 # Ignore the main and cli binary file when run on LINUX
 cli
 main
+cgo_examples

@@ -10,7 +10,7 @@ import "fmt"
 
 	int add(int a, int b) {
 		int sum = a + b;
-		printf("a: %d, b: %d, sum %d\n", a, b, sum);
+		printf("In C - a: %d, b: %d, sum %d\n", a, b, sum);
 		return sum;
 	}
 */
