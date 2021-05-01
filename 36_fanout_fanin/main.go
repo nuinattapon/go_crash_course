@@ -22,10 +22,10 @@ func main() {
 	// FAN OUT
 	// Multiple functions reading from the same channel until that channel is closed
 	// Distribute work across multiple functions (ten goroutines) that all read from in.
-	c0 := fibonacci(done, in)
-	c1 := fibonacci(done, in)
-	c2 := fibonacci(done, in)
-	c3 := fibonacci(done, in)
+	c0 := worker(done, in)
+	c1 := worker(done, in)
+	c2 := worker(done, in)
+	c3 := worker(done, in)
 
 	// Tell the remaining senders we're leaving.
 	// go func(n int) {
@@ -62,7 +62,7 @@ func gen() <-chan int {
 	return out
 }
 
-func fibonacci(done <-chan struct{}, in <-chan int) <-chan int {
+func worker(done <-chan struct{}, in <-chan int) <-chan int {
 	out := make(chan int)
 	go func() {
 		defer close(out)
