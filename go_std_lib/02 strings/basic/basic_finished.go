@@ -3,16 +3,17 @@ package main
 import (
 	"fmt"
 	"strings"
+	"unicode/utf8"
 )
 
 func main() {
 	s := "The quick brown fox jumps over the lazy dog"
-
+	// s := "Hello, 世界, สวัสดี"
 	// Basic string operations
 
 	// Length of string
-	fmt.Println(len(s))
-
+	fmt.Printf("len(\"%s\") = %d\n", s, len(s))
+	fmt.Printf("utf8.RuneCountInString(\"%s\") = %d\n", s, utf8.RuneCountInString(s))
 	// iterate over each character
 	for _, ch := range s {
 		fmt.Print(string(ch), ",")
