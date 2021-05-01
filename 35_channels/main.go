@@ -1,20 +1,30 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
+
 	jobs := make(chan int, 100)
 	results := make(chan int, 100)
 
 	go worker(jobs, results)
 	go worker(jobs, results)
+	go worker(jobs, results)
+	go worker(jobs, results)
 
-	for i := 0; i < 50; i++ {
+	n := 75
+
+	for i := 0; i < n; i++ {
 		jobs <- i
 	}
 	close(jobs)
 
-	for j := 0; j < 50; j++ {
+	for i := 0; i < n; i++ {
 		fmt.Println(<-results)
 	}
 }
@@ -22,7 +32,10 @@ func main() {
 func worker(jobs <-chan int, results chan<- int) {
 	for n := range jobs {
 		results <- fib(n)
+		// delay := rand.Intn(40)
+		// time.Sleep(time.Duration(delay) * time.Millisecond)
 	}
+	close(jobs)
 }
 
 // Fast fib
