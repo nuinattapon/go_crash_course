@@ -18,3 +18,7 @@ vendor/
 cli
 main
 cgo_examples
+
+
+# Node Modules
+node_modules/
