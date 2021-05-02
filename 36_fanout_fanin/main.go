@@ -34,7 +34,7 @@ func main() {
 	// 	done <- struct{}{}
 	// 	done <- struct{}{}
 	// 	done <- struct{}{}
-	// }(10)
+	// }(20)
 
 	// FAN IN
 	// multiplex multiple channels onto a single channel
@@ -52,8 +52,8 @@ func main() {
 func gen() <-chan int {
 	out := make(chan int)
 	go func() {
-		for i := 0; i < 100; i++ {
-			for j := 1; j < 20; j++ {
+		for i := 0; i < 500; i++ {
+			for j := 0; j < 50; j++ {
 				out <- j
 			}
 		}
@@ -68,7 +68,7 @@ func worker(done <-chan struct{}, in <-chan int) <-chan int {
 		defer close(out)
 		for n := range in {
 			select {
-			case out <- fact(n):
+			case out <- fib2(n):
 			case <-done:
 				return
 			}
@@ -78,6 +78,8 @@ func worker(done <-chan struct{}, in <-chan int) <-chan int {
 }
 
 func fact(n int) int {
+	// Add latency
+	// time.Sleep(time.Duration(20) * time.Millisecond)
 	total := 1
 	for i := n; i > 0; i-- {
 		total *= i
@@ -85,7 +87,7 @@ func fact(n int) int {
 	return total
 }
 
-// Fast fib
+// Loop fib
 func fib(n int) int {
 	f := make([]int, n+1, n+2)
 	if n < 2 {
@@ -97,6 +99,14 @@ func fib(n int) int {
 		f[i] = f[i-1] + f[i-2]
 	}
 	return f[n]
+}
+
+// Recursive fib
+func fib2(n int) int {
+	if n <= 1 {
+		return n
+	}
+	return fib2(n-1) + fib2(n-2)
 }
 
 func merge(done <-chan struct{}, cs ...<-chan int) <-chan int {
