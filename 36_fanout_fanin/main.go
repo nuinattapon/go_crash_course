@@ -68,7 +68,7 @@ func worker(done <-chan struct{}, in <-chan int) <-chan int {
 		defer close(out)
 		for n := range in {
 			select {
-			case out <- fib2(n):
+			case out <- fib(n):
 			case <-done:
 				return
 			}
