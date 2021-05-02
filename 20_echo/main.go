@@ -11,8 +11,9 @@ import (
 // This is the response struct that will be
 // serialized and sent back
 type StatusResponse struct {
-	Status string `json:"status"`
-	User   string `json:"user"`
+	Message string `json:"message"`
+	User    string `json:"user"`
+	Status  string `json:"status"`
 }
 
 // In addition to echo request handlers
@@ -24,8 +25,9 @@ func UserGetHandler(e echo.Context) error {
 	fmt.Println(e.ParamNames())
 	fmt.Println(e.ParamValues())
 	body := &StatusResponse{
-		Status: "Hello world from echo!",
-		User:   e.Param("user"),
+		Message: "Hello, 世界, สวัสดี!",
+		User:    e.Param("user"),
+		Status:  "OK",
 	}
 
 	// In this case we can return the JSON
@@ -60,8 +62,9 @@ func UserPostHandler(e echo.Context) error {
 	}
 
 	body := &StatusResponse{
-		Status: "Hello world from echo!",
-		User:   requestBody.Name,
+		Message: "Hello world from echo!",
+		User:    requestBody.Name,
+		Status:  "OK",
 	}
 
 	return e.JSON(http.StatusOK, body)
