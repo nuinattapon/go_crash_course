@@ -8,7 +8,9 @@ import (
 
 func main() {
 	// Initialize the random seed to an unknown value
-	rand.Seed(time.Now().UnixNano())
+	seed := (time.Now().UnixNano())
+	fmt.Printf("Seed = %d", seed)
+	rand.Seed(seed)
 
 	// generate random Integer numbers
 	fmt.Println(rand.Int())

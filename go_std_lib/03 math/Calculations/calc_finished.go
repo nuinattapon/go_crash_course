@@ -23,8 +23,8 @@ func main() {
 	fmt.Println(math.Log(10))
 
 	// Square and cube roots
-	fmt.Println(math.Sqrt(25))
-	fmt.Println(math.Cbrt(125))
+	fmt.Println(math.Sqrt(2))
+	fmt.Println(math.Cbrt(27))
 
 	// calculate the Hypotenuse of a right triangle
 	fmt.Println(math.Hypot(30, 40))

@@ -20,8 +20,8 @@ func main() {
 	fmt.Println(math.Min(math.Pi, math.Ln2))
 
 	// Mod operator is like % but for floats
-	fmt.Println(17 % 5)
-	fmt.Println(math.Mod(17.0, 5.0))
+	fmt.Printf("%T %+[1]v\n", int64(17%5))
+	fmt.Printf("%T %+[1]v\n", math.Mod(17.0, 5.0))
 
 	// Round and RoundToEven
 	fmt.Printf("%.1f\n", math.Round(10.5))

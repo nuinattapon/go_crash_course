@@ -62,7 +62,7 @@ func UserPostHandler(e echo.Context) error {
 	}
 
 	body := &StatusResponse{
-		Message: "Hello world from echo!",
+		Message: "Hello, 世界, สวัสดี!",
 		User:    requestBody.Name,
 		Status:  "OK",
 	}

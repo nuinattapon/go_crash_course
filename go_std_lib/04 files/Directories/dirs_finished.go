@@ -6,14 +6,22 @@ import (
 	"os"
 )
 
+func handleErr(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
 func main() {
 	// create a directory
-	os.Mkdir("newdir", os.ModePerm)
+	err :=os.Mkdir("newdir", os.ModePerm)
+	handleErr(err)
 	// Remove will remove an item
 	defer os.Remove("newdir")
 
 	// create a deep directory
-	os.MkdirAll("path/to/new/dir", os.ModePerm)
+	err=os.MkdirAll("path/to/new/dir", os.ModePerm)
+	handleErr(err)
+
 	// RemoveAll will remove an item and all children
 	defer os.RemoveAll("path")
 

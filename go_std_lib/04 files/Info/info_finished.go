@@ -20,6 +20,8 @@ func main() {
 	stats, err := os.Stat("sampletext.txt")
 	if err != nil {
 		panic(err)
+	} else {
+		// fmt.Printf("%+v", stats)
 	}
 
 	// Check if a file exists
@@ -29,7 +31,7 @@ func main() {
 	// Get the file's modification time
 	fmt.Println("Modification time:", stats.ModTime())
 
-	fmt.Println("File mode:", stats.Mode())
+	fmt.Printf("File mode: %s\n", stats.Mode())
 	fmode := stats.Mode()
 	if fmode.IsRegular() {
 		fmt.Println("This is a regular file")

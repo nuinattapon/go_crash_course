@@ -7,3 +7,12 @@ Content-Type: application/json; charset=UTF-8
 {"name":"Somboon"}
 
 ###
+GET http://rpi4:3000/users/nui HTTP/1.1
+
+###
+POST http://rpi4:3000/users HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{"name":"Somboon"}
+
+###

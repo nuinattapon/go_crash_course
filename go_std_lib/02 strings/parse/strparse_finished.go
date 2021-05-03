@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 )
 
@@ -40,7 +41,7 @@ func main() {
 	// Other format functions
 	s = strconv.FormatBool(true)
 	fmt.Println(s)
-	s = strconv.FormatFloat(3.14159, 'E', -1, 64)
+	s = strconv.FormatFloat(math.Pi, 'f', -1, 64)
 	fmt.Println(s)
 	s = strconv.FormatInt(-42, 10)
 	fmt.Println(s)

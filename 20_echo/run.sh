@@ -1,1 +1,1 @@
-npx nodemon --exec go run main.go --signal SIGTERM
+gin --appPort 8002 --port 3000

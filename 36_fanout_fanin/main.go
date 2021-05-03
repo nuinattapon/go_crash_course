@@ -27,14 +27,20 @@ func main() {
 	c2 := worker(done, in)
 	c3 := worker(done, in)
 
+	// done <- struct{}{}
+	// done <- struct{}{}
+	// done <- struct{}{}
+	// done <- struct{}{}
+
 	// Tell the remaining senders we're leaving.
-	// go func(n int) {
-	// 	time.Sleep(time.Duration(n) * time.Millisecond)
-	// 	done <- struct{}{}
-	// 	done <- struct{}{}
-	// 	done <- struct{}{}
-	// 	done <- struct{}{}
-	// }(20)
+	go func(n int) {
+		fmt.Printf("Waiting for %d ms before fire the stop signal", n)
+		time.Sleep(time.Duration(n) * time.Millisecond)
+		done <- struct{}{}
+		done <- struct{}{}
+		done <- struct{}{}
+		done <- struct{}{}
+	}(3000)
 
 	// FAN IN
 	// multiplex multiple channels onto a single channel
@@ -89,6 +95,8 @@ func fact(n int) int {
 
 // Loop fib
 func fib(n int) int {
+	// Add latency
+	time.Sleep(time.Duration(10) * time.Millisecond)
 	f := make([]int, n+1, n+2)
 	if n < 2 {
 		f = f[0:2]
@@ -113,6 +121,9 @@ func merge(done <-chan struct{}, cs ...<-chan int) <-chan int {
 	var wg sync.WaitGroup
 	out := make(chan int)
 
+	// Start an output goroutine for each input channel in cs.  output
+	// copies values from c to out until c is closed or it receives a value
+	// from done, then output calls wg.Done.
 	output := func(c <-chan int) {
 		defer wg.Done()
 

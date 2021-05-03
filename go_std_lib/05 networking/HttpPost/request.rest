@@ -1,0 +1,7 @@
+POST https://httpbin.org/post HTTP/2.0
+Content-Type: application/json; charset=UTF-8
+
+{"field1":"field added via Values","field2":300}
+###
+
+GET https://httpbin.org/get HTTP/2.0

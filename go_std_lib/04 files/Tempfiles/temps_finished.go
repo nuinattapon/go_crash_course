@@ -12,8 +12,9 @@ func main() {
 	fmt.Println("The default temp dir path is ", tempPath)
 
 	// create a temporary file use TempFile
-	tempContent := []byte("This is some temp content for the file")
+	tempContent := []byte("Hello, 世界, สวัสดี\nThis is some temp content for the file")
 	tmpFile, err := ioutil.TempFile(tempPath, "tempfile_*.txt")
+	
 	if err != nil {
 		panic(err)
 	}

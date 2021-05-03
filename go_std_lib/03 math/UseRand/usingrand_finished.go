@@ -12,7 +12,7 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	// Shuffle a sequence of values
-	const numstring = "one two three four five six"
+	const numstring = "zero one two three four five six seven eight night"
 	words := strings.Fields(numstring)
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]

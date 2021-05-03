@@ -32,7 +32,10 @@ func getRequestTest() {
 	bytecount, _ := sb.Write(content)
 
 	// Format the output
-	fmt.Println(bytecount, sb.String())
+	fmt.Println(bytecount, "\n", sb.String())
+
+	// Convert []byte to String
+	fmt.Println(string(content))
 }
 
 func main() {

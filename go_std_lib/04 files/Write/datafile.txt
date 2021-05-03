@@ -1,0 +1,3 @@
+Hello, 世界, สวัสดี
+Here is some text data
+This data was appended
