@@ -60,8 +60,26 @@ func postRequestTest() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Struct: %#v\n", message)
+	fmt.Printf("Struct: %#v\n\n", message)
 
+	// data can also be decoded into a map structure
+	var m map[string]interface{}
+
+	// Unmarshal into a map
+	json.Unmarshal(content, &m)
+	fmt.Printf("%#v\n", m)
+	for k, v := range m {
+		fmt.Printf("key (%v), value (%T : %v)\n", k, v, v)
+	}
+
+	fmt.Printf("%T %#[1]v\n", m["data"])
+
+	var data map[string]interface{}
+	// Unmarshal into a map
+	json.Unmarshal([]byte(fmt.Sprintf("%v", m["data"])), &data)
+	for k, v := range data {
+		fmt.Printf("key (%v), value (%T : %v)\n", k, v, v)
+	}
 }
 
 func main() {
