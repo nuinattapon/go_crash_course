@@ -22,3 +22,6 @@ cgo_examples
 
 # Node Modules
 node_modules/
+
+# certificates
+certs/

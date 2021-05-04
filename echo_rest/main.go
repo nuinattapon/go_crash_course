@@ -27,11 +27,11 @@ func init() {
 // can be returned to handle them easily
 
 func PingGetHandler(e echo.Context) error {
-	return e.HTML(http.StatusOK, "pong")
+	return e.String(http.StatusOK, "pong")
 }
 
 func VersionGetHandler(e echo.Context) error {
-	return e.HTML(http.StatusOK, "v1.0")
+	return e.String(http.StatusOK, "v1.0")
 }
 
 func HelloGetHandler(e echo.Context) error {
@@ -44,9 +44,10 @@ type Test struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
+
 func UserGetHandler(e echo.Context) error {
 	// Execute the query
-	results, err := mysqlDB.Query("SELECT id, name FROM acme.test")
+	results, err := mysqlDB.Query("SELECT id, name FROM acme.test LIMIT 100")
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -70,25 +71,76 @@ func UserGetHandler(e echo.Context) error {
 	// thrown by this will be handled
 	return e.JSON(http.StatusOK, testSlice)
 }
+func UserGetHandler2(e echo.Context) error {
+	// Create response object
+	// fmt.Println(e.ParamNames())
+	// fmt.Println(e.ParamValues())
+	// to get query string parameters
+	// - e.Request.URL.Query().Get("bar")
+	fmt.Println(e.Param("id"))
+	// Execute the query
+	results, err := mysqlDB.Query("SELECT id, name FROM acme.test WHERE id = ?", e.Param("id"))
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	testSlice := []Test{}
 
+	for results.Next() {
+		var test Test
+		// for each row, scan the result into our tag composite object
+		err = results.Scan(&test.ID, &test.Name)
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic in your app
+		}
+		testSlice = append(testSlice, test)
+	}
+
+	// stat := db.Stats()
+	// fmt.Printf("%+v", stat)
+
+	// In this case we can return the JSON
+	// function with our body as errors
+	// thrown by this will be handled
+	if len(testSlice) == 1 {
+		return e.JSON(http.StatusOK, testSlice[0])
+
+	} else if len(testSlice) == 0 {
+		return e.JSON(http.StatusNotFound, testSlice)
+	} else {
+		return e.JSON(http.StatusOK, testSlice)
+	}
+}
 
 func UserPostHandler(e echo.Context) error {
 	// Similar to the gin implementation,
 	// we start off by creating an
 	// empty request body struct
 	test := &Test{}
-
-	// Bind body to the request body
-	// struct and check for potential
-	// errors
 	err := e.Bind(test)
 	if err != nil {
-		// If an error was created by the
-		// Bind operation, we can utilize
-		// echo's request handler structure
-		// and simply return the error so
-		// it gets handled accordingly
+
 		return err
+	}
+	// Execute the query
+	results, err := mysqlDB.Query("SELECT id, name FROM acme.test WHERE name = ?", test.Name)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	testSlice := []Test{}
+
+	for results.Next() {
+		var test Test
+		// for each row, scan the result into our tag composite object
+		err = results.Scan(&test.ID, &test.Name)
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic in your app
+		}
+		testSlice = append(testSlice, test)
+	}
+
+	if len(testSlice) != 0 {
+		test.ID = 0
+		return e.JSON(http.StatusMethodNotAllowed, test)
 	}
 
 	// Insert a name into acme.test table
@@ -137,7 +189,6 @@ func main() {
 	defer mysqlDB.Close()
 	log.Println("Successfully connecting to MySQL Database!")
 
-	
 	// Create echo instance
 	e := echo.New()
 
@@ -154,10 +205,11 @@ func main() {
 	e.GET("/version", VersionGetHandler)
 	e.GET("/hello", HelloGetHandler)
 
-	// Add endpoint route for /users
+	// Add endpoint route for /test
 	e.GET("/test", UserGetHandler)
+	e.GET("/test/:id", UserGetHandler2)
 	e.POST("/test", UserPostHandler)
-
+	// Add endpoint route for /test/<username>
 	// Start echo and handle errors
 	// Start server
 	port := 8002
