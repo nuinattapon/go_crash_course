@@ -1,22 +1,22 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"runtime"
 
 	_ "github.com/go-sql-driver/mysql"
+	sqlx "github.com/jmoiron/sqlx"
 	echo "github.com/labstack/echo/v4"
 	middleware "github.com/labstack/echo/v4/middleware"
 )
 
 // Define mysqlDB as a global variable
-var mysqlDB *sql.DB
+var mysqlDB *sqlx.DB
 
 func init() {
-	log.Printf("GOMAXPROCS: %+v, NumCPU: %+v\n",
+	log.Printf("ECHO_TEST INIT - GOMAXPROCS: %+v, NumCPU: %+v\n",
 		runtime.GOMAXPROCS(-1), runtime.NumCPU())
 
 }
@@ -41,66 +41,61 @@ func HelloGetHandler(e echo.Context) error {
 // This simple struct will be deserialized
 // and processed in the request handler
 type Test struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID   int    `db:"id" json:"id"`
+	Name string `db:"name" json:"name"`
+}
+
+type TestJSON struct {
+	ID   int    `db:"id" json:"id,omitempty"`
+	Name string `db:"name" json:"name,omitempty"`
+	Data string `db:"data" json:"data"`
+}
+
+func TestJSONGetHandler(e echo.Context) error {
+	// Execute the query
+	// We use sqlx syntax here in stead of golang sql
+	testSlice := []TestJSON{}
+	err := mysqlDB.Select(&testSlice, "SELECT id, name, data FROM acme.test_json2 LIMIT 100")
+
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+
+	return e.JSON(http.StatusOK, testSlice)
 }
 
 func UserGetHandler(e echo.Context) error {
 	// Execute the query
-	results, err := mysqlDB.Query("SELECT id, name FROM acme.test LIMIT 100")
+	// We use sqlx syntax here in stead of golang sql
+	testSlice := []Test{}
+	err := mysqlDB.Select(&testSlice, "SELECT id, name FROM acme.test LIMIT 100")
+
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	testSlice := []Test{}
-
-	for results.Next() {
-		var test Test
-		// for each row, scan the result into our tag composite object
-		err = results.Scan(&test.ID, &test.Name)
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
-		testSlice = append(testSlice, test)
-	}
-
-	// stat := db.Stats()
-	// fmt.Printf("%+v", stat)
 
 	// In this case we can return the JSON
 	// function with our body as errors
 	// thrown by this will be handled
 	return e.JSON(http.StatusOK, testSlice)
 }
+
 func UserGetHandler2(e echo.Context) error {
 	// Create response object
 	// fmt.Println(e.ParamNames())
 	// fmt.Println(e.ParamValues())
 	// to get query string parameters
 	// - e.Request.URL.Query().Get("bar")
+
+	// We use sqlx syntax here in stead of golang sql
 	fmt.Println(e.Param("id"))
-	// Execute the query
-	results, err := mysqlDB.Query("SELECT id, name FROM acme.test WHERE id = ?", e.Param("id"))
+	testSlice := []Test{}
+	err := mysqlDB.Select(&testSlice, "SELECT id, name FROM acme.test WHERE id = ?", e.Param("id"))
+
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	testSlice := []Test{}
 
-	for results.Next() {
-		var test Test
-		// for each row, scan the result into our tag composite object
-		err = results.Scan(&test.ID, &test.Name)
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
-		testSlice = append(testSlice, test)
-	}
-
-	// stat := db.Stats()
-	// fmt.Printf("%+v", stat)
-
-	// In this case we can return the JSON
-	// function with our body as errors
-	// thrown by this will be handled
 	if len(testSlice) == 1 {
 		return e.JSON(http.StatusOK, testSlice[0])
 
@@ -116,57 +111,30 @@ func UserPostHandler(e echo.Context) error {
 	// we start off by creating an
 	// empty request body struct
 	test := &Test{}
-	err := e.Bind(test)
-	if err != nil {
-
+	if err := e.Bind(test); err != nil {
 		return err
 	}
 	// Execute the query
-	results, err := mysqlDB.Query("SELECT id, name FROM acme.test WHERE name = ?", test.Name)
-	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
-	}
 	testSlice := []Test{}
 
-	for results.Next() {
-		var test Test
-		// for each row, scan the result into our tag composite object
-		err = results.Scan(&test.ID, &test.Name)
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
-		testSlice = append(testSlice, test)
+	if err := mysqlDB.Select(&testSlice, "SELECT id, name FROM acme.test WHERE name = ?", test.Name); err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 
 	if len(testSlice) != 0 {
-		test.ID = 0
+		test.ID = -1
 		return e.JSON(http.StatusMethodNotAllowed, test)
 	}
+	tx := mysqlDB.MustBegin()
 
-	// Insert a name into acme.test table
-	insertStmt, err := mysqlDB.Prepare("INSERT INTO acme.test (name) VALUES( ? )")
-	if err != nil {
+	if result, err := tx.Exec("INSERT INTO acme.test (name) VALUES( ? )", test.Name); err != nil {
 		panic(err.Error())
+	} else {
+		tx.Commit()
+		lastInsertID, _ := result.LastInsertId()
+		test.ID = int(lastInsertID)
+		return e.JSON(http.StatusOK, test)
 	}
-	defer insertStmt.Close()
-
-	_, err = insertStmt.Exec(test.Name)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	// Get id from acme.test
-	// Execute the query
-	// test2 := &Test{}
-
-	var insertID int64
-	err = mysqlDB.QueryRow("select LAST_INSERT_ID()").Scan(&insertID)
-	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
-	}
-
-	test.ID = int(insertID)
-	return e.JSON(http.StatusOK, test)
 }
 
 func main() {
@@ -175,14 +143,16 @@ func main() {
 	// The database is called "mysql"
 	var err error
 
-	mysqlDB, err = sql.Open("mysql", "nattapon:Welcome1@tcp(192.168.1.6:3306)/mysql")
+	mysqlDB, err = sqlx.Open("mysql", "nattapon:Welcome1@tcp(192.168.1.6:3306)/mysql")
 
 	// if there is an error opening the connection, handle it
 	if err != nil {
 		panic(err.Error())
 	}
 
-	mysqlDB.SetMaxOpenConns(10)
+	mysqlDB.SetMaxOpenConns(20)
+	mysqlDB.SetMaxIdleConns(10)
+	// mysqlDB.SetConnMaxLifetime(time.Duration(3600)*time.Second)
 
 	// defer the close till after the main function has finished
 	// executing
@@ -209,7 +179,10 @@ func main() {
 	e.GET("/test", UserGetHandler)
 	e.GET("/test/:id", UserGetHandler2)
 	e.POST("/test", UserPostHandler)
-	// Add endpoint route for /test/<username>
+
+	// Add endpoint route for /test_json
+	e.GET("/test_json", TestJSONGetHandler)
+
 	// Start echo and handle errors
 	// Start server
 	port := 8002
