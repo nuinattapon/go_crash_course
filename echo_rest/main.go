@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"runtime"
 
 	_ "github.com/go-sql-driver/mysql"
 	sqlx "github.com/jmoiron/sqlx"
@@ -14,12 +13,6 @@ import (
 
 // Define mysqlDB as a global variable
 var mysqlDB *sqlx.DB
-
-func init() {
-	log.Printf("ECHO_TEST INIT - GOMAXPROCS: %+v, NumCPU: %+v\n",
-		runtime.GOMAXPROCS(-1), runtime.NumCPU())
-
-}
 
 // In addition to echo request handlers
 // using a special context including
@@ -144,7 +137,6 @@ func main() {
 	var err error
 
 	mysqlDB, err = sqlx.Open("mysql", "nattapon:Welcome1@tcp(192.168.1.6:3306)/mysql")
-
 	// if there is an error opening the connection, handle it
 	if err != nil {
 		panic(err.Error())
@@ -189,4 +181,9 @@ func main() {
 	if err := e.Start(fmt.Sprintf(":%d", port)); err != nil {
 		e.Logger.Fatal(err.Error())
 	}
+
+	// port := 8002
+	// if err := e.StartTLS(fmt.Sprintf(":%d", port), "./certs/tls-cert.crt", "./certs/tls-key.key"); err != nil {
+	// 	e.Logger.Fatal(err.Error())
+	// }
 }
