@@ -19,10 +19,11 @@ func (h *handler) private(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
 
-	for k, v := range claims {
-		log.Printf("key = %v, type = %T, value = %v\n", k, v, v)
-	}
+	// for k, v := range claims {
+	// 	log.Printf("key = %v, type = %T, value = %v\n", k, v, v)
+	// }
 	id := claims["id"]
+	name := claims["name"].(string)
 	exp := time.Unix(int64(claims["exp"].(float64)), 0)
 
 	var isAdminStr string
@@ -33,7 +34,7 @@ func (h *handler) private(c echo.Context) error {
 	}
 	// exp := claims["name"].(string)
 
-	reply1 := fmt.Sprintf("Status %3d - Welcome UID# %.0f.\nYou have %s privilege!\n", http.StatusOK, id, isAdminStr)
+	reply1 := fmt.Sprintf("Status %3d - Welcome UID# %.0f (%s)\nYou have %s privilege!\n", http.StatusOK, id, name, isAdminStr)
 	reply2 := fmt.Sprintf("Token expiry date: %s\n", exp.Format(time.RFC1123Z))
 	reply3 := fmt.Sprintf("              Now: %s\n", time.Now().Format(time.RFC1123Z))
 	var reply4 string
@@ -114,7 +115,7 @@ func (h *handler) token(c echo.Context) error {
 
 		if len(userSlice) == 1 { //if we found a user from the uid
 			user := userSlice[0]
-			log.Printf("%+v\n", user)
+			// log.Printf("%+v\n", user)
 			newTokenPair, err := generateTokenPair(user)
 			if err != nil {
 				return err

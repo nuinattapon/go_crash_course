@@ -59,7 +59,7 @@ func main() {
 	h := &handler{}
 	e.POST("/login", h.login)
 	e.GET("/private", h.private, isLoggedIn)
-	e.POST("/token", h.token, isLoggedIn) // refresh access token
+	e.POST("/token", h.token) // refresh access token
 	e.GET("/admin", h.private, isLoggedIn, isAdmin)
 
 	// Start echo and handle errors
