@@ -82,7 +82,6 @@ func TestGetHandler2(c echo.Context) error {
 	// - e.Request.URL.Query().Get("bar")
 
 	// We use sqlx syntax here in stead of golang sql
-	fmt.Println(c.Param("id"))
 	testSlice := []Test{}
 	err := mysqlDB.Select(&testSlice, "SELECT id, name FROM acme.test WHERE id = ?", c.Param("id"))
 
@@ -139,7 +138,7 @@ type User struct {
 	Password     string       `db:"password" json:"password,omitempty"`
 	Location     string       `db:"location" json:"location"`
 	Department   string       `db:"dept" json:"department"`
-	IsAdmin      int          `db:"is_admin" json:"is_admin"`
+	IsAdmin      bool         `db:"is_admin" json:"is_admin"`
 	RegisterDate sql.NullTime `db:"register_date" json:"register_date"`
 	Age          int          `db:"age" json:"age"`
 }
@@ -160,6 +159,28 @@ func UserGetHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, userSlice)
 }
 
+func UserGetHandler2(c echo.Context) error {
+	// Execute the query
+	// We use sqlx syntax here in stead of golang sql
+	userSlice := []User{}
+	err := mysqlDB.Select(&userSlice, "SELECT * FROM acme.users WHERE id = ? LIMIT 100", c.Param("id"))
+
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+
+	// In this case we can return the JSON
+	// function with our body as errors
+	// thrown by this will be handled
+	if len(userSlice) == 1 {
+		return c.JSON(http.StatusOK, userSlice[0])
+
+	} else if len(userSlice) == 0 {
+		return c.JSON(http.StatusNotFound, userSlice)
+	} else {
+		return c.JSON(http.StatusOK, userSlice)
+	}
+}
 func main() {
 	// Open up our database connection.
 	// I've set up a database on my local machine using phpmyadmin.
@@ -207,6 +228,7 @@ func main() {
 
 	// Add endpoint route for /user
 	e.GET("/user", UserGetHandler)
+	e.GET("/user/:id", UserGetHandler2)
 
 	// Start echo and handle errors
 	// Start server

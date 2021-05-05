@@ -17,3 +17,5 @@ GET http://rpi4:3000/test/2 HTTP/1.1
 GET http://rpi4:3000/test_json HTTP/1.1
 ### GET all users
 GET http://rpi4:3000/user HTTP/1.1
+### GET a user by ID
+GET http://rpi4:3000/user/1 HTTP/1.1
