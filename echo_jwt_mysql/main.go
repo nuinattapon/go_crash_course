@@ -14,7 +14,7 @@ import (
 
 // Define mysqlDB as a global variable
 var mysqlDB *sqlx.DB
-var jwtSecret = "secret"
+var jwtSecret = "ihcvRewKHN6=DL|J2ibaV+i&W"
 
 type User struct {
 	ID             int64     `db:"uid" json:"id"`
@@ -59,7 +59,7 @@ func main() {
 	h := &handler{}
 	e.POST("/login", h.login)
 	e.GET("/private", h.private, isLoggedIn)
-	e.GET("/token", h.token, isLoggedIn) // refresh access token
+	e.POST("/token", h.token, isLoggedIn) // refresh access token
 	e.GET("/admin", h.private, isLoggedIn, isAdmin)
 
 	// Start echo and handle errors
