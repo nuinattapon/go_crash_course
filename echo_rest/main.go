@@ -8,7 +8,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	sqlx "github.com/jmoiron/sqlx"
-	echo "github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4"
 	middleware "github.com/labstack/echo/v4/middleware"
 )
 
@@ -93,7 +93,7 @@ func TestGetHandler2(c echo.Context) error {
 		return c.JSON(http.StatusOK, testSlice[0])
 
 	} else if len(testSlice) == 0 {
-		return c.JSON(http.StatusNotFound, testSlice)
+		return echo.ErrNotFound // c.JSON(http.StatusNotFound, testSlice)
 	} else {
 		return c.JSON(http.StatusOK, testSlice)
 	}
@@ -116,7 +116,7 @@ func TestPostHandler(c echo.Context) error {
 
 	if len(testSlice) != 0 {
 		test.ID = -1
-		return c.JSON(http.StatusMethodNotAllowed, test)
+		return echo.ErrMethodNotAllowed // c.JSON(http.StatusMethodNotAllowed, test)
 	}
 	tx := mysqlDB.MustBegin()
 

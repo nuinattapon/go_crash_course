@@ -13,6 +13,8 @@ Content-Type: application/json; charset=UTF-8
 {"name":"Wassana"}
 ### GET a test by ID
 GET http://rpi4:3000/test/2 HTTP/1.1
+### GET a test by ID - not found
+GET http://rpi4:3000/test/100 HTTP/1.1
 ### GET all test_json 
 GET http://rpi4:3000/test_json HTTP/1.1
 ### GET all users
