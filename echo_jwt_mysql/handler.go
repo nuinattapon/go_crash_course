@@ -18,17 +18,32 @@ type handler struct{}
 func (h *handler) private(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
-	name := claims["name"].(string)
-	var adminStatus string
+
+	for k, v := range claims {
+		log.Printf("key = %v, type = %T, value = %v\n", k, v, v)
+	}
+	id := claims["id"]
+	exp := time.Unix(int64(claims["exp"].(float64)), 0)
+
+	var isAdminStr string
 	if isAdmin := claims["admin"].(bool); isAdmin {
-		adminStatus = "admin"
+		isAdminStr = "admin"
 	} else {
-		adminStatus = "no admin"
+		isAdminStr = "no admin"
 	}
 	// exp := claims["name"].(string)
 
-	reply := fmt.Sprintf("Status %3d - Welcome %s.\nYou have %s privilege!", http.StatusOK, name, adminStatus)
-	return c.String(http.StatusOK, reply)
+	reply1 := fmt.Sprintf("Status %3d - Welcome UID# %.0f.\nYou have %s privilege!\n", http.StatusOK, id, isAdminStr)
+	reply2 := fmt.Sprintf("Token expiry date: %s\n", exp.Format(time.RFC1123Z))
+	reply3 := fmt.Sprintf("              Now: %s\n", time.Now().Format(time.RFC1123Z))
+	var reply4 string
+	if exp.Before(time.Now()) {
+		reply4 = "Access is expired!"
+	} else {
+		reply4 = "Access is still valid."
+	}
+	reply := reply1 + reply2 + reply3 + reply4
+	return c.HTML(http.StatusOK, reply)
 }
 
 // Most of the code is taken from the echo guide
@@ -51,24 +66,98 @@ func (h *handler) login(c echo.Context) error {
 	// Comparing the password with the hash
 	if err := bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(password)); err == nil {
 		// Create token
-		log.Println("Password is correct!")
+		// log.Println("Password is correct!")
 		token := jwt.New(jwt.SigningMethodHS512)
 		// Set claims
 		// This is the information which frontend can use
 		// The backend can also decode the token and get admin etc.
 		claims := token.Claims.(jwt.MapClaims)
+		claims["id"] = user.ID
 		claims["name"] = user.UserName
 		claims["admin"] = user.IsAdmin
-		claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+		// claims["iat"] = time.Now()
+		claims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+		for k, v := range claims {
+			log.Printf("key = %v, type = %T, value = %v\n", k, v, v)
+		}
 		// Generate encoded token and send it as response.
 		// The signing string should be secret (a generated UUID          works too)
 		t, err := token.SignedString([]byte(jwtSecret))
 		if err != nil {
 			return err
 		}
+
+		refreshToken := jwt.New(jwt.SigningMethodHS512)
+		rtClaims := refreshToken.Claims.(jwt.MapClaims)
+		rtClaims["sub"] = user.ID // sub is UID of the user
+		rtClaims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+
+		// log.Printf("rtClaims   Type %T and expired at %[1]v", rtClaims["exp"])
+		// log.Printf("time.Now() Type %T and expired at %[1]v", time.Now().Unix())
+
+		rt, err := refreshToken.SignedString([]byte(jwtSecret))
+		if err != nil {
+			return err
+		}
+
 		return c.JSON(http.StatusOK, map[string]string{
-			"token": t,
+			"access_token":  t,
+			"refresh_token": rt,
 		})
 	}
 	return echo.ErrUnauthorized
+}
+
+type tokenReqBody struct {
+	RefreshToken string `json:"refresh_token"`
+}
+
+// This is the api to refresh tokens
+// Most of the code is taken from the jwt-go package's sample codes
+// https://godoc.org/github.com/dgrijalva/jwt-go#example-Parse--Hmac
+func (h *handler) token(c echo.Context) error {
+
+	tokenReq := tokenReqBody{}
+	c.Bind(&tokenReq)
+
+	// Parse takes the token string and a function for looking up the key.
+	// The latter is especially useful if you use multiple keys for your application.
+	// The standard is to use 'kid' in the head of the token to identify
+	// which key to use, but the parsed token (head and claims) is provided
+	// to the callback, providing flexibility.
+	token, err := jwt.Parse(tokenReq.RefreshToken, func(token *jwt.Token) (interface{}, error) {
+		// Don't forget to validate the alg is what you expect:
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
+		return []byte(jwtSecret), nil
+	})
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		// Get the user record from database or
+		// run through your business logic to verify if the user can log in
+		uid := int64(claims["sub"].(float64))
+
+		userSlice := []User{}
+		err := mysqlDB.Select(&userSlice, "SELECT * FROM nui.user WHERE uid = ? LIMIT 1", uid)
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic in your app
+		}
+
+		if len(userSlice) == 1 { //if we found a user from the uid
+			user := userSlice[0]
+			log.Printf("%+v\n", user)
+			newTokenPair, err := generateTokenPair2(user)
+			if err != nil {
+				return err
+			}
+
+			return c.JSON(http.StatusOK, newTokenPair)
+		}
+
+		return echo.ErrUnauthorized
+	}
+
+	return err
 }

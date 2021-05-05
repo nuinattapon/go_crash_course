@@ -14,25 +14,39 @@ POST http://rpi4:3000/login
 Content-Type: application/x-www-form-urlencoded; charset=UTF-8
 
 username=sam&password=Welcome1
+
+### POST login successfully
+### curl -X POST localhost:1323/login -d "username=jon&password=nope"
+POST http://rpi4:3000/login
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+
+username=nuch&password=Welcome1
 ### GET private using nui's token
 GET http://rpi4:3000/private HTTP/1.1
 Content-Type: application/json; charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwNDYyNTA4LCJuYW1lIjoibnVpIn0.8RLJwak-wFxGnAOc1VOd8WQKMlm7uAz5d0IXf3ibBEz7Ud69CpSBQrmUBC8ZBFi29fgSe-N7KvEkR3Osw_yT5g
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwMjIwNzc5LCJpZCI6MSwibmFtZSI6Im51aSJ9.K9Lk8Dw1r8lA1Ph136eEWh7F87L4nSkum0kAn959ScbCr8PbEePYkj_mvQ08KFunvwk7u2a-COrv2UwuYLHL4w
 
 ### GET private using sam's token
 GET http://rpi4:3000/private HTTP/1.1
 Content-Type: application/json; charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTYyMDQ2MzY0MSwibmFtZSI6InNhbSJ9.nviE_Lph9hy_DvxmSI_FrbeLnbcSGmCYSUzl5jCcoKEo4mQvf-TkPCyzDO4L7XsTuLC34FTq5tqxRMVzzzjMpw
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTYyMDIxOTQ3OCwiaWQiOjIsIm5hbWUiOiJzYW0ifQ.DesboHR9VmIvnErvXhP1gtNGGbjIsfyq-m4LNa8gDTCDul_fNPBDqTbHbVaz3L_kZLExJOFEN0OGLaLFbJRmXA
 ### GET admin while admin is true in token
 GET http://rpi4:3000/admin HTTP/1.1
 Content-Type: application/json; charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwNDYyNTA4LCJuYW1lIjoibnVpIn0.8RLJwak-wFxGnAOc1VOd8WQKMlm7uAz5d0IXf3ibBEz7Ud69CpSBQrmUBC8ZBFi29fgSe-N7KvEkR3Osw_yT5g
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwMjIwNzc5LCJpZCI6MSwibmFtZSI6Im51aSJ9.K9Lk8Dw1r8lA1Ph136eEWh7F87L4nSkum0kAn959ScbCr8PbEePYkj_mvQ08KFunvwk7u2a-COrv2UwuYLHL4w
 
 ### GET admin while admin is false in token
 GET http://rpi4:3000/admin HTTP/1.1
 Content-Type: application/json; charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTYyMDQ2MzY0MSwibmFtZSI6InNhbSJ9.nviE_Lph9hy_DvxmSI_FrbeLnbcSGmCYSUzl5jCcoKEo4mQvf-TkPCyzDO4L7XsTuLC34FTq5tqxRMVzzzjMpw
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTYyMDIyMDgzMSwiaWQiOjIsIm5hbWUiOiJzYW0ifQ.UUN2X9hswe0Xq22pYaz2kxF3BmcfxhmLcmVVjcTE-LBbmI_6Z9TXxMdfbPGrLi4iMbQh4cIzV-eoQ2t9YmfPJg
 
 
 
+###
+nui
+  "access_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwMjIwNzc5LCJpZCI6MSwibmFtZSI6Im51aSJ9.K9Lk8Dw1r8lA1Ph136eEWh7F87L4nSkum0kAn959ScbCr8PbEePYkj_mvQ08KFunvwk7u2a-COrv2UwuYLHL4w",
+  "refresh_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjAzMDYyNzksInN1YiI6MX0.-fmyJGUhIOgiIEmvdh4wNsrPgk9RhU6hrRqAHB8aRgTpOxCx3hnQneJWfo857AOuP-nUsAe4TwAPwywSs2AKFw"
 
+sam
+  "access_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTYyMDIyMDgzMSwiaWQiOjIsIm5hbWUiOiJzYW0ifQ.UUN2X9hswe0Xq22pYaz2kxF3BmcfxhmLcmVVjcTE-LBbmI_6Z9TXxMdfbPGrLi4iMbQh4cIzV-eoQ2t9YmfPJg",
+  "refresh_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjAzMDYzMzEsInN1YiI6Mn0.sJrFtwYQva51vmwNyZ59uWZbQV6XT20YSkOOpwIN968bbe5mAQz5U1p4xg1yiiFhIDho43KcvPZSLAo0Te5-Mw"

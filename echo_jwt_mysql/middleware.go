@@ -7,7 +7,7 @@ import (
 )
 
 var isLoggedIn = middleware.JWTWithConfig(middleware.JWTConfig{
-	SigningKey: []byte("secret"), SigningMethod: "HS512",
+	SigningKey: []byte(jwtSecret), SigningMethod: "HS512",
 })
 
 func isAdmin(next echo.HandlerFunc) echo.HandlerFunc {

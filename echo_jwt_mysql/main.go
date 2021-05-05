@@ -17,6 +17,7 @@ var mysqlDB *sqlx.DB
 var jwtSecret = "secret"
 
 type User struct {
+	ID             int64     `db:"uid" json:"id"`
 	UserName       string    `db:"user_name" json:"user_name"`
 	Email          string    `db:"email" json:"email"`
 	HashedPassword string    `db:"hashed_password" json:"-"`
@@ -45,8 +46,10 @@ func main() {
 	// Middleware
 	// e.Use(middleware.Logger())
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "time = ${time_rfc3339} method=${method}, uri=${uri}, status=${status},latency=${latency_human}\n",
+		Format: "time = ${time_rfc3339}, method=${method}, uri=${uri}, status=${status},latency=${latency_human}\n",
 	}))
+
+	e.Use(middleware.CORS())
 	e.Use(middleware.Gzip())
 	e.Use(middleware.Recover())
 
@@ -56,6 +59,7 @@ func main() {
 	h := &handler{}
 	e.POST("/login", h.login)
 	e.GET("/private", h.private, isLoggedIn)
+	e.GET("/token", h.token, isLoggedIn) // refresh access token
 	e.GET("/admin", h.private, isLoggedIn, isAdmin)
 
 	// Start echo and handle errors
