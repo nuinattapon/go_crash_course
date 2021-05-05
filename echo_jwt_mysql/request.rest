@@ -6,25 +6,33 @@ GET http://rpi4:3000/ HTTP/1.1
 POST http://rpi4:3000/login
 Content-Type: application/x-www-form-urlencoded; charset=UTF-8
 
-username=jon&password=password
+username=nui&password=Welcome1
 
-### POST login unsuccessfully
+### POST login as non admin
 ### curl -X POST localhost:1323/login -d "username=jon&password=nope"
 POST http://rpi4:3000/login
 Content-Type: application/x-www-form-urlencoded; charset=UTF-8
 
-username=jon&password=pwd
-### GET private
+username=sam&password=Welcome1
+### GET private using nui's token
 GET http://rpi4:3000/private HTTP/1.1
 Content-Type: application/json; charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwNDU0ODczLCJuYW1lIjoiSm9uIERvZSJ9.WPVYh9_-sDL0G8cL_v-Us8vPcmanbZe3rLEPIZsalbnxSWo4tb7UbHqao85x_HeCKNGEPrpajQA4GC7P3AsRMw
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwNDYyNTA4LCJuYW1lIjoibnVpIn0.8RLJwak-wFxGnAOc1VOd8WQKMlm7uAz5d0IXf3ibBEz7Ud69CpSBQrmUBC8ZBFi29fgSe-N7KvEkR3Osw_yT5g
 
+### GET private using sam's token
+GET http://rpi4:3000/private HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTYyMDQ2MzY0MSwibmFtZSI6InNhbSJ9.nviE_Lph9hy_DvxmSI_FrbeLnbcSGmCYSUzl5jCcoKEo4mQvf-TkPCyzDO4L7XsTuLC34FTq5tqxRMVzzzjMpw
 ### GET admin while admin is true in token
 GET http://rpi4:3000/admin HTTP/1.1
 Content-Type: application/json; charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwNDU0ODczLCJuYW1lIjoiSm9uIERvZSJ9.WPVYh9_-sDL0G8cL_v-Us8vPcmanbZe3rLEPIZsalbnxSWo4tb7UbHqao85x_HeCKNGEPrpajQA4GC7P3AsRMw
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwNDYyNTA4LCJuYW1lIjoibnVpIn0.8RLJwak-wFxGnAOc1VOd8WQKMlm7uAz5d0IXf3ibBEz7Ud69CpSBQrmUBC8ZBFi29fgSe-N7KvEkR3Osw_yT5g
 
 ### GET admin while admin is false in token
 GET http://rpi4:3000/admin HTTP/1.1
 Content-Type: application/json; charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTYyMDQ1NTA5MywibmFtZSI6IkpvbiBEb2UifQ.To8nsjd9dazcHK2MwsqhKjQJw9cWjE6pMzvQ3v0SpOmfxERTmZ4iQsbeVrIbPNwnMhKnQvYq0gtYHVX0T5VK1Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTYyMDQ2MzY0MSwibmFtZSI6InNhbSJ9.nviE_Lph9hy_DvxmSI_FrbeLnbcSGmCYSUzl5jCcoKEo4mQvf-TkPCyzDO4L7XsTuLC34FTq5tqxRMVzzzjMpw
+
+
+
+
