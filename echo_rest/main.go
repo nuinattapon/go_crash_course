@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -44,7 +45,7 @@ type TestJSON struct {
 	Data string `db:"data" json:"data"`
 }
 
-func TestJSONGetHandler(e echo.Context) error {
+func TestJSONGetHandler(c echo.Context) error {
 	// Execute the query
 	// We use sqlx syntax here in stead of golang sql
 	testSlice := []TestJSON{}
@@ -54,10 +55,10 @@ func TestJSONGetHandler(e echo.Context) error {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 
-	return e.JSON(http.StatusOK, testSlice)
+	return c.JSON(http.StatusOK, testSlice)
 }
 
-func UserGetHandler(e echo.Context) error {
+func TestGetHandler(c echo.Context) error {
 	// Execute the query
 	// We use sqlx syntax here in stead of golang sql
 	testSlice := []Test{}
@@ -70,10 +71,10 @@ func UserGetHandler(e echo.Context) error {
 	// In this case we can return the JSON
 	// function with our body as errors
 	// thrown by this will be handled
-	return e.JSON(http.StatusOK, testSlice)
+	return c.JSON(http.StatusOK, testSlice)
 }
 
-func UserGetHandler2(e echo.Context) error {
+func TestGetHandler2(c echo.Context) error {
 	// Create response object
 	// fmt.Println(e.ParamNames())
 	// fmt.Println(e.ParamValues())
@@ -81,30 +82,30 @@ func UserGetHandler2(e echo.Context) error {
 	// - e.Request.URL.Query().Get("bar")
 
 	// We use sqlx syntax here in stead of golang sql
-	fmt.Println(e.Param("id"))
+	fmt.Println(c.Param("id"))
 	testSlice := []Test{}
-	err := mysqlDB.Select(&testSlice, "SELECT id, name FROM acme.test WHERE id = ?", e.Param("id"))
+	err := mysqlDB.Select(&testSlice, "SELECT id, name FROM acme.test WHERE id = ?", c.Param("id"))
 
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 
 	if len(testSlice) == 1 {
-		return e.JSON(http.StatusOK, testSlice[0])
+		return c.JSON(http.StatusOK, testSlice[0])
 
 	} else if len(testSlice) == 0 {
-		return e.JSON(http.StatusNotFound, testSlice)
+		return c.JSON(http.StatusNotFound, testSlice)
 	} else {
-		return e.JSON(http.StatusOK, testSlice)
+		return c.JSON(http.StatusOK, testSlice)
 	}
 }
 
-func UserPostHandler(e echo.Context) error {
+func TestPostHandler(c echo.Context) error {
 	// Similar to the gin implementation,
 	// we start off by creating an
 	// empty request body struct
 	test := &Test{}
-	if err := e.Bind(test); err != nil {
+	if err := c.Bind(test); err != nil {
 		return err
 	}
 	// Execute the query
@@ -116,7 +117,7 @@ func UserPostHandler(e echo.Context) error {
 
 	if len(testSlice) != 0 {
 		test.ID = -1
-		return e.JSON(http.StatusMethodNotAllowed, test)
+		return c.JSON(http.StatusMethodNotAllowed, test)
 	}
 	tx := mysqlDB.MustBegin()
 
@@ -126,8 +127,37 @@ func UserPostHandler(e echo.Context) error {
 		tx.Commit()
 		lastInsertID, _ := result.LastInsertId()
 		test.ID = int(lastInsertID)
-		return e.JSON(http.StatusOK, test)
+		return c.JSON(http.StatusOK, test)
 	}
+}
+
+type User struct {
+	ID           int          `db:"id" json:"id"`
+	FirstName    string       `db:"first_name" json:"first_name"`
+	LastName     string       `db:"last_name" json:"last_name"`
+	Email        string       `db:"email" json:"email"`
+	Password     string       `db:"password" json:"password,omitempty"`
+	Location     string       `db:"location" json:"location"`
+	Department   string       `db:"dept" json:"department"`
+	IsAdmin      int          `db:"is_admin" json:"is_admin"`
+	RegisterDate sql.NullTime `db:"register_date" json:"register_date"`
+	Age          int          `db:"age" json:"age"`
+}
+
+func UserGetHandler(c echo.Context) error {
+	// Execute the query
+	// We use sqlx syntax here in stead of golang sql
+	userSlice := []User{}
+	err := mysqlDB.Select(&userSlice, "SELECT * FROM acme.users LIMIT 100")
+
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+
+	// In this case we can return the JSON
+	// function with our body as errors
+	// thrown by this will be handled
+	return c.JSON(http.StatusOK, userSlice)
 }
 
 func main() {
@@ -136,7 +166,7 @@ func main() {
 	// The database is called "mysql"
 	var err error
 
-	mysqlDB, err = sqlx.Open("mysql", "nattapon:Welcome1@tcp(192.168.1.6:3306)/mysql")
+	mysqlDB, err = sqlx.Open("mysql", "nattapon:Welcome1@tcp(192.168.1.6:3306)/acme?parseTime=true")
 	// if there is an error opening the connection, handle it
 	if err != nil {
 		panic(err.Error())
@@ -168,12 +198,15 @@ func main() {
 	e.GET("/hello", HelloGetHandler)
 
 	// Add endpoint route for /test
-	e.GET("/test", UserGetHandler)
-	e.GET("/test/:id", UserGetHandler2)
-	e.POST("/test", UserPostHandler)
+	e.GET("/test", TestGetHandler)
+	e.GET("/test/:id", TestGetHandler2)
+	e.POST("/test", TestPostHandler)
 
 	// Add endpoint route for /test_json
 	e.GET("/test_json", TestJSONGetHandler)
+
+	// Add endpoint route for /user
+	e.GET("/user", UserGetHandler)
 
 	// Start echo and handle errors
 	// Start server

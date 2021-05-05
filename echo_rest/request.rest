@@ -4,14 +4,16 @@ GET http://rpi4:3000/ping HTTP/1.1
 GET http://rpi4:3000/version HTTP/1.1
 ### Hello
 GET http://rpi4:3000/hello HTTP/1.1
-###
+### GET all test
 GET http://rpi4:3000/test HTTP/1.1
-###
+### POST a test
 POST http://rpi4:3000/test HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 
 {"name":"Wassana"}
-###
+### GET a test by ID
 GET http://rpi4:3000/test/2 HTTP/1.1
-###
+### GET all test_json 
 GET http://rpi4:3000/test_json HTTP/1.1
+### GET all users
+GET http://rpi4:3000/user HTTP/1.1
