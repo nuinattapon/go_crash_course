@@ -45,13 +45,13 @@ func main() {
 	}
 
 	for i, u := range userSlice {
-		var isAdmin string
+		var adminStr string
 		if u.IsAdmin {
-			isAdmin = "admin"
+			adminStr = "admin"
 		} else {
-			isAdmin = "not admin"
+			adminStr = "not admin"
 		}
-		fmt.Printf("%d - %-5s %-9s %v %v\n", i, u.UserName, isAdmin, u.CreatedAt, u.UpdatedAt)
+		fmt.Printf("%d - %-5s %-9s %v %v\n", i, u.UserName, adminStr, u.CreatedAt, u.UpdatedAt)
 	}
 
 	// Get is used for query a single row
@@ -98,12 +98,9 @@ func main() {
 	}
 
 	for i, u := range userSlice {
-		var isAdmin string
-		if u.IsAdmin {
-			isAdmin = "admin"
-		} else {
-			isAdmin = "not admin"
-		}
-		fmt.Printf("%d - %-5s %-9s %v %v\n", i, u.UserName, isAdmin, u.CreatedAt, u.UpdatedAt)
+
+		adminStr := map[bool]string{true: "admin", false: "not admin"}[u.IsAdmin]
+
+		fmt.Printf("%d - %-5s %-9s %v %v\n", i, u.UserName, adminStr, u.CreatedAt, u.UpdatedAt)
 	}
 }
