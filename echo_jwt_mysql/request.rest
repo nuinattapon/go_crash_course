@@ -24,7 +24,7 @@ username=nuch&password=Welcome1
 ### GET private using nui's token
 GET http://rpi4:3000/private HTTP/1.1
 Content-Type: application/json; charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwMjI4MDQxLCJpZCI6MSwibmFtZSI6Im51aSJ9.0qBOk3douNIX9tZuyP_3c-IB-45RolEDcHbj0scbkgCfUIDVx1WT-8q4XwSx0GWSF6G1p_wjwu5_aQm-VYRCEg
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwMzAxMDY3LCJpZCI6MSwibmFtZSI6Im51aSJ9.v_XdEdzabges2WMgywZBI1Iw5vlocKVyZNu-W3ckJ_TMGU_g3_-xAWawOaKmh6fowHdsb7QuPUX8epzUhEYkLQ
 
 ### GET private using sam's token
 GET http://rpi4:3000/private HTTP/1.1
@@ -33,7 +33,7 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsI
 ### GET admin while admin is true in token
 GET http://rpi4:3000/admin HTTP/1.1
 Content-Type: application/json; charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwMjI4MDQxLCJpZCI6MSwibmFtZSI6Im51aSJ9.0qBOk3douNIX9tZuyP_3c-IB-45RolEDcHbj0scbkgCfUIDVx1WT-8q4XwSx0GWSF6G1p_wjwu5_aQm-VYRCEg
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwMzAxMDY3LCJpZCI6MSwibmFtZSI6Im51aSJ9.v_XdEdzabges2WMgywZBI1Iw5vlocKVyZNu-W3ckJ_TMGU_g3_-xAWawOaKmh6fowHdsb7QuPUX8epzUhEYkLQ
 
 ### GET admin while admin is false in token
 GET http://rpi4:3000/admin HTTP/1.1
@@ -48,8 +48,7 @@ Content-Type: application/json; charset=UTF-8
 
 ###
 nui
-  "access_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwMjI4MDQxLCJpZCI6MSwibmFtZSI6Im51aSJ9.0qBOk3douNIX9tZuyP_3c-IB-45RolEDcHbj0scbkgCfUIDVx1WT-8q4XwSx0GWSF6G1p_wjwu5_aQm-VYRCEg",
-  "refresh_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjAzMTM1NDEsInN1YiI6MX0.BQcYHuteyTXQuxcCF92obB6xxMa4stCIMihHfCzirDpmYdE-Pc3hOix7MDp0vWQsmaI3_J0t4CsI4EwXU2OZ-Q"
-sam  
+  "access_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwMzAxMDY3LCJpZCI6MSwibmFtZSI6Im51aSJ9.v_XdEdzabges2WMgywZBI1Iw5vlocKVyZNu-W3ckJ_TMGU_g3_-xAWawOaKmh6fowHdsb7QuPUX8epzUhEYkLQ",
+  "refresh_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjAzODY1NjcsInN1YiI6MX0.xzDcsZx-DhYdLdq2YlkSdRtXID7tKQuUFKCF_9XYJih18J3DN1aS47ax-7KjjxfTJrv2c36Dv3z6utSVp2IYOg"sam  
   "access_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTYyMDIyODYzOSwiaWQiOjIsIm5hbWUiOiJzYW0ifQ.mU_TzYi8LqCJWtP4oCT3o9iTbix3TMjMJAArnqummjRLvXhOp5CmSDjt8uRkvymHL27eFqCRSvAO4SWiWPvi_A",
   "refresh_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjAzMTQxMzksInN1YiI6Mn0.rKx6r4Z_e5P3Ma7QdDpipnzbSiNag7FDMQ1TE_qYjLliYeXvoDZZLhXr13v23FawnoYPWh3EK9QFcgYuu8kcsA"

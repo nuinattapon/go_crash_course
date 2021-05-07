@@ -71,6 +71,7 @@ func (h *handler) login(c echo.Context) error {
 		if err != nil {
 			return err
 		}
+		// c.Response().Header().Set("X-Auth-Token", newTokenPair["access_token"])
 		return c.JSON(http.StatusOK, newTokenPair)
 	}
 	return echo.ErrUnauthorized
