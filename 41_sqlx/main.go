@@ -10,8 +10,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// Define mysqlDB as a global variable
-var mysqlDB *sqlx.DB
+// Define db as a global variable
+var db *sqlx.DB
 var timezone *time.Location
 
 type User struct {
@@ -24,6 +24,28 @@ type User struct {
 	UpdatedAt      time.Time `db:"updated_at" json:"updated_at"`
 }
 
+func init() {
+	var err error
+	// Initialize timezone variable
+	timezone, err = time.LoadLocation("Asia/Bangkok")
+	if err != nil {
+		panic(err.Error())
+	} else {
+		log.Println("Timezone is initialzied to 'Asia/Bangkok' ")
+
+	}
+
+	// Initialize db variable
+	db, err = sqlx.Open("mysql", "dev:Welcome1@tcp(192.168.1.6:3306)/nui?parseTime=true")
+	// if there is an error opening the connection, handle it
+	if err != nil {
+		panic(err.Error())
+	} else {
+		log.Println("Database connection is initialized")
+	}
+	db.SetMaxOpenConns(20)
+}
+
 func main() {
 
 	// Open up our database connection.
@@ -31,85 +53,83 @@ func main() {
 	// The database is called "mysql"
 	var err error
 
-	mysqlDB, err = sqlx.Open("mysql", "dev:Welcome1@tcp(192.168.1.6:3306)/nui?parseTime=true")
-	// if there is an error opening the connection, handle it
-	if err != nil {
-		panic(err.Error())
-	} else {
-		log.Println("Database connection is initialized")
-	}
-	mysqlDB.SetMaxOpenConns(20)
-
 	// Select is used to query multiple rows
-	userSlice := []User{}
-	err = mysqlDB.Select(&userSlice, "SELECT * FROM nui.user ORDER by uid LIMIT 100")
+	users := []User{}
+	err = db.Select(&users, "SELECT * FROM nui.user ORDER by uid LIMIT 100")
 	if err != nil && err != sql.ErrNoRows {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	fmt.Println("Data before runing transaction")
-	timezone, err = time.LoadLocation("Asia/Bangkok")
-	if err != nil {
-		panic(err.Error())
-	}
 
-	for i, u := range userSlice {
-		adminStr := map[bool]string{true: "admin", false: "not admin"}[u.IsAdmin]
-		fmt.Printf("%d - %-5s - %-9s - %s - %s\n", i, u.UserName, adminStr, u.CreatedAt.In(timezone).Format(time.RFC822Z), u.UpdatedAt.In(timezone).Format(time.RFC822Z))
-	}
+	printUsers(users)
 
 	// Get is used for query a single row
-	user_name := "sfasfs"
+	user_name := "test"
 	user := User{}
-	err = mysqlDB.Get(&user, "SELECT * FROM nui.user WHERE user_name = ? LIMIT 100", user_name)
-	if err != nil && err != sql.ErrNoRows {
-		panic(err.Error()) // proper error handling instead of panic in your app
-	}
+	err = db.Get(&user, "SELECT * FROM nui.user WHERE user_name = ? LIMIT 100", user_name)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Printf("\nCan not find a user with user_name '%s'\n", user_name)
+		} else {
+			panic(err.Error()) // proper error handling instead of panic in your app
+		}
 
-	tx := mysqlDB.MustBegin()
+	}
+	fmt.Printf("\nA user with user_name '%s' is found\n", user_name)
+	printUser(user)
 
 	updated_at := time.Now()
-	res, err := tx.Exec("UPDATE nui.user set updated_at = ?", updated_at)
+
+	tx := db.MustBegin()
+
+	result, err := tx.Exec("UPDATE nui.user set updated_at = ?", updated_at)
 	if err != nil {
 		panic(err.Error())
 	}
-	lastInsertId, _ := res.LastInsertId()
-	rowsAffected, _ := res.RowsAffected()
-	fmt.Printf("Execution Result: lastInsertId %d - rowsAffected %d\n", lastInsertId, rowsAffected)
+	printSqlResult(result)
 
-	// res, err = tx.Exec("DELETE from nui.user where user_name = 'test'")
-	// if err != nil {
-	// 	panic(err.Error())
-	// }
-	// lastInsertId, _ = res.LastInsertId()
-	// rowsAffected, _ = res.RowsAffected()
-	// fmt.Printf("Execution Result: lastInsertId %d - rowsAffected %d\n", lastInsertId, rowsAffected)
+	result, err = tx.Exec("DELETE from nui.user where user_name = 'test'")
+	if err != nil {
+		panic(err.Error())
+	}
+	printSqlResult(result)
 
-	res, err = tx.Exec(`
+	result, err = tx.Exec(`
 	INSERT into nui.user  
 	(user_name, email, hashed_password,is_admin,created_at,updated_at) 
 	values (?,?,?,?,?,?)`, "test", "test@test.com", "$2a$11$fTDn/IzGVYpj5C2P1QewPOZwxuVpsHjH3go0YORqfDDk/G7UhZWna", 0, updated_at, updated_at)
 	if err != nil {
 		panic(err.Error())
 	}
-	lastInsertId, _ = res.LastInsertId()
-	rowsAffected, _ = res.RowsAffected()
-	fmt.Printf("Execution Result: lastInsertId %d - rowsAffected %d\n", lastInsertId, rowsAffected)
+	printSqlResult(result)
+
 	// tx.Rollback()
 	tx.Commit()
 	fmt.Println("\nData after runing transaction")
 
 	// Select
-	userSlice = []User{}
-	err = mysqlDB.Select(&userSlice, "SELECT * FROM nui.user ORDER BY uid LIMIT 100")
+	users = []User{}
+	err = db.Select(&users, "SELECT * FROM nui.user ORDER BY uid LIMIT 100")
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 
-	for i, u := range userSlice {
+	printUsers(users)
 
-		adminStr := map[bool]string{true: "admin", false: "not admin"}[u.IsAdmin]
+}
 
-		// fmt.Printf("%d - %-5s %-9s %v %v\n", i, u.UserName, adminStr, u.CreatedAt, u.UpdatedAt)
-		fmt.Printf("%d - %-5s - %-9s - %s - %s\n", i, u.UserName, adminStr, u.CreatedAt.In(timezone).Format(time.RFC822Z), u.UpdatedAt.In(timezone).Format(time.RFC822Z))
+func printSqlResult(result sql.Result) {
+	lastInsertId, _ := result.LastInsertId()
+	rowsAffected, _ := result.RowsAffected()
+	fmt.Printf("Execution Result: lastInsertId %d - rowsAffected %d\n", lastInsertId, rowsAffected)
+}
+func printUsers(users []User) {
+	for _, u := range users {
+		printUser(u)
 	}
+}
+
+func printUser(user User) {
+	adminStr := map[bool]string{true: "admin", false: "not admin"}[user.IsAdmin]
+	fmt.Printf("%2d - %-5s - %-9s - %s - %s\n", user.ID, user.UserName, adminStr, user.CreatedAt.In(timezone).Format(time.RFC822Z), user.UpdatedAt.In(timezone).Format(time.RFC822Z))
 }
