@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"time"
@@ -11,6 +12,7 @@ import (
 
 // Define mysqlDB as a global variable
 var mysqlDB *sqlx.DB
+var timezone *time.Location
 
 type User struct {
 	ID             int64     `db:"uid" json:"id"`
@@ -41,40 +43,57 @@ func main() {
 	// Select is used to query multiple rows
 	userSlice := []User{}
 	err = mysqlDB.Select(&userSlice, "SELECT * FROM nui.user ORDER by uid LIMIT 100")
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-
 	fmt.Println("Data before runing transaction")
-	loc, err := time.LoadLocation("Asia/Bangkok")
+	timezone, err = time.LoadLocation("Asia/Bangkok")
 	if err != nil {
 		panic(err.Error())
 	}
 
 	for i, u := range userSlice {
 		adminStr := map[bool]string{true: "admin", false: "not admin"}[u.IsAdmin]
-		fmt.Printf("%d - %-5s - %-9s - %s - %s\n", i, u.UserName, adminStr, u.CreatedAt.In(loc).Format(time.RFC822Z), u.UpdatedAt.In(loc).Format(time.RFC822Z))
+		fmt.Printf("%d - %-5s - %-9s - %s - %s\n", i, u.UserName, adminStr, u.CreatedAt.In(timezone).Format(time.RFC822Z), u.UpdatedAt.In(timezone).Format(time.RFC822Z))
 	}
 
 	// Get is used for query a single row
-	user_name := "nui"
+	user_name := "sfasfs"
 	user := User{}
 	err = mysqlDB.Get(&user, "SELECT * FROM nui.user WHERE user_name = ? LIMIT 100", user_name)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 
 	tx := mysqlDB.MustBegin()
 
 	updated_at := time.Now()
-	tx.MustExec("UPDATE nui.user set updated_at = ?", updated_at)
-	tx.MustExec("DELETE from nui.user where user_name = 'test'")
-	tx.MustExec(`
-	INSERT into nui.user 
-	(user_name, email, hashed_password,is_admin,created_at,updated_at) 
-	values (?,?,?,?,?,?)`,
-		"test", "test@test.com", "$2a$11$fTDn/IzGVYpj5C2P1QewPOZwxuVpsHjH3go0YORqfDDk/G7UhZWna", 0, updated_at, updated_at)
+	res, err := tx.Exec("UPDATE nui.user set updated_at = ?", updated_at)
+	if err != nil {
+		panic(err.Error())
+	}
+	lastInsertId, _ := res.LastInsertId()
+	rowsAffected, _ := res.RowsAffected()
+	fmt.Printf("Execution Result: lastInsertId %d - rowsAffected %d\n", lastInsertId, rowsAffected)
 
+	// res, err = tx.Exec("DELETE from nui.user where user_name = 'test'")
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+	// lastInsertId, _ = res.LastInsertId()
+	// rowsAffected, _ = res.RowsAffected()
+	// fmt.Printf("Execution Result: lastInsertId %d - rowsAffected %d\n", lastInsertId, rowsAffected)
+
+	res, err = tx.Exec(`
+	INSERT into nui.user  
+	(user_name, email, hashed_password,is_admin,created_at,updated_at) 
+	values (?,?,?,?,?,?)`, "test", "test@test.com", "$2a$11$fTDn/IzGVYpj5C2P1QewPOZwxuVpsHjH3go0YORqfDDk/G7UhZWna", 0, updated_at, updated_at)
+	if err != nil {
+		panic(err.Error())
+	}
+	lastInsertId, _ = res.LastInsertId()
+	rowsAffected, _ = res.RowsAffected()
+	fmt.Printf("Execution Result: lastInsertId %d - rowsAffected %d\n", lastInsertId, rowsAffected)
 	// tx.Rollback()
 	tx.Commit()
 	fmt.Println("\nData after runing transaction")
@@ -91,9 +110,6 @@ func main() {
 		adminStr := map[bool]string{true: "admin", false: "not admin"}[u.IsAdmin]
 
 		// fmt.Printf("%d - %-5s %-9s %v %v\n", i, u.UserName, adminStr, u.CreatedAt, u.UpdatedAt)
-		fmt.Printf("%d - %-5s - %-9s - %s - %s\n", i, u.UserName, adminStr, u.CreatedAt.In(loc).Format(time.RFC822Z), u.UpdatedAt.In(loc).Format(time.RFC822Z))
+		fmt.Printf("%d - %-5s - %-9s - %s - %s\n", i, u.UserName, adminStr, u.CreatedAt.In(timezone).Format(time.RFC822Z), u.UpdatedAt.In(timezone).Format(time.RFC822Z))
 	}
-
-	currentTime := time.Now().Truncate(time.Minute)
-	fmt.Printf("%s", currentTime.In(loc).Format(time.RFC822Z))
 }
