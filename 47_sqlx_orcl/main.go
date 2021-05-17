@@ -43,6 +43,9 @@ func printSqlResult(result sql.Result) {
 	fmt.Printf("Execution Result: lastInsertId %d - rowsAffected %d\n", lastInsertId, rowsAffected)
 }
 func printUsers(users []User) {
+	fmt.Printf("%-2s %-5s %-9s %-21s %-21s\n", "--", "----", "--------", "----------", "----------")
+	fmt.Printf("%-2s %-5s %-9s %-21s %-21s\n", "ID", "Name", "Is admin", "Created At", "Updated At")
+	fmt.Printf("%-2s %-5s %-9s %-21s %-21s\n", "--", "----", "--------", "----------", "----------")
 	for _, u := range users {
 		printUser(u)
 	}
@@ -50,7 +53,7 @@ func printUsers(users []User) {
 
 func printUser(user User) {
 	adminStr := map[bool]string{true: "admin", false: "not admin"}[user.IsAdmin]
-	fmt.Printf("%2d - %-5s - %-9s - %s - %s\n", user.ID, user.UserName, adminStr, user.CreatedAt.In(timezone).Format(time.RFC822Z), user.UpdatedAt.In(timezone).Format(time.RFC822Z))
+	fmt.Printf("%2d %-5s %-9s %-21s %-21s\n", user.ID, user.UserName, adminStr, user.CreatedAt.In(timezone).Format(time.RFC822Z), user.UpdatedAt.In(timezone).Format(time.RFC822Z))
 }
 
 func init() {
@@ -92,7 +95,7 @@ func main() {
 		rows.Scan(&thedate)
 	}
 	rows.Close()
-	fmt.Printf("Current time in ATP is: %s\n", thedate.In(timezone).Format(time.RFC822Z))
+	fmt.Printf("\nCurrent time in ATP is %s\n\n", thedate.In(timezone).Format(time.RFC822Z))
 
 	// Select is used to query multiple rows
 	users := []User{}
@@ -100,6 +103,7 @@ func main() {
 	if err != nil && err != sql.ErrNoRows {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	} else if err == sql.ErrNoRows || len(users) == 0 {
+		fmt.Println("Data before runing transaction")
 		fmt.Println("No rows in the table!")
 	} else {
 		fmt.Println("Data before runing transaction")
@@ -146,7 +150,6 @@ func main() {
 	}
 	fmt.Println("\nINSERT into nui.user2 (user_name, email, hashed_password,is_admin,created_at,updated_at) ...")
 	printSqlResult(result)
-	fmt.Printf("%v\n", result)
 	// tx.Rollback()
 	tx.Commit()
 
@@ -156,6 +159,7 @@ func main() {
 	if err != nil && err != sql.ErrNoRows {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	} else if err == sql.ErrNoRows || len(users) == 0 {
+		fmt.Println("\nData after runing transaction")
 		fmt.Println("No rows in the table!")
 	} else {
 		fmt.Println("\nData after runing transaction")
