@@ -77,6 +77,7 @@ func init() {
 
 func main() {
 	var err error
+	defer db.Close()
 
 	// Check if we can query from oracle dual table
 	rows, err := db.Query("select sysdate from dual")
@@ -91,32 +92,34 @@ func main() {
 		rows.Scan(&thedate)
 	}
 	rows.Close()
-	fmt.Printf("The date is: %s\n", thedate.In(timezone).Format(time.RFC822Z))
+	fmt.Printf("Current time in ATP is: %s\n", thedate.In(timezone).Format(time.RFC822Z))
 
 	// Select is used to query multiple rows
 	users := []User{}
 	err = db.Select(&users, "SELECT * FROM nui.user2 ORDER by id FETCH FIRST 100 ROWS ONLY")
 	if err != nil && err != sql.ErrNoRows {
 		panic(err.Error()) // proper error handling instead of panic in your app
+	} else if err == sql.ErrNoRows || len(users) == 0 {
+		fmt.Println("No rows in the table!")
+	} else {
+		fmt.Println("Data before runing transaction")
+		printUsers(users)
 	}
-	fmt.Println("Data before runing transaction")
-
-	printUsers(users)
 
 	// Get is used for query a single row
 	user_name := "test"
 	user := User{}
-	err = db.Get(&user, "SELECT * FROM nui.user2 WHERE user_name = &1 FETCH FIRST 100 ROWS ONLY", user_name)
+	err = db.Get(&user, "SELECT * FROM nui.user2 WHERE user_name = &1 ORDER by id FETCH FIRST 100 ROWS ONLY", user_name)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Printf("\nCan not find a user with user_name '%s'\n", user_name)
 		} else {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
-
+	} else {
+		fmt.Printf("\nA user with user_name '%s' is found\n", user_name)
+		printUser(user)
 	}
-	fmt.Printf("\nA user with user_name '%s' is found\n", user_name)
-	printUser(user)
 
 	updated_at := time.Now()
 
@@ -134,7 +137,6 @@ func main() {
 	// 	panic(err.Error())
 	// }
 	// printSqlResult(result)
-
 	result, err = tx.Exec(`
 	INSERT into nui.user2  
 	(user_name, email, hashed_password,is_admin,created_at,updated_at) 
@@ -144,18 +146,20 @@ func main() {
 	}
 	fmt.Println("\nINSERT into nui.user2 (user_name, email, hashed_password,is_admin,created_at,updated_at) ...")
 	printSqlResult(result)
-
+	fmt.Printf("%v\n", result)
 	// tx.Rollback()
 	tx.Commit()
-	fmt.Println("\nData after runing transaction")
 
 	// Select
 	users = []User{}
-	err = db.Select(&users, "SELECT * FROM nui.user2 ORDER BY id FETCH FIRST 100 ROWS ONLY")
-	if err != nil {
+	err = db.Select(&users, "SELECT * FROM nui.user2 ORDER by id FETCH FIRST 100 ROWS ONLY")
+	if err != nil && err != sql.ErrNoRows {
 		panic(err.Error()) // proper error handling instead of panic in your app
+	} else if err == sql.ErrNoRows || len(users) == 0 {
+		fmt.Println("No rows in the table!")
+	} else {
+		fmt.Println("\nData after runing transaction")
+		printUsers(users)
 	}
-
-	printUsers(users)
 
 }
