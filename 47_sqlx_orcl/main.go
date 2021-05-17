@@ -8,6 +8,7 @@ import (
 
 	_ "github.com/godror/godror"
 	"github.com/jmoiron/sqlx"
+	"github.com/nuinattapon/go_crash_course/47_sqlx_orcl/util"
 )
 
 // Define db as a global variable
@@ -44,7 +45,7 @@ func printSqlResult(result sql.Result) {
 }
 func printUsers(users []User) {
 	fmt.Printf("%-2s %-5s %-9s %-21s %-21s\n", "--", "----", "--------", "----------", "----------")
-	fmt.Printf("%-2s %-5s %-9s %-21s %-21s\n", "ID", "Name", "Is admin", "Created At", "Updated At")
+	fmt.Printf("%-2s %-5s %-9s %-21s %-21s\n", "ID", "Name", "Is Admin", "Created At", "Updated At")
 	fmt.Printf("%-2s %-5s %-9s %-21s %-21s\n", "--", "----", "--------", "----------", "----------")
 	for _, u := range users {
 		printUser(u)
@@ -52,7 +53,7 @@ func printUsers(users []User) {
 }
 
 func printUser(user User) {
-	adminStr := map[bool]string{true: "admin", false: "not admin"}[user.IsAdmin]
+	adminStr := map[bool]string{true: "Yes", false: "No"}[user.IsAdmin]
 	fmt.Printf("%2d %-5s %-9s %-21s %-21s\n", user.ID, user.UserName, adminStr, user.CreatedAt.In(timezone).Format(time.RFC822Z), user.UpdatedAt.In(timezone).Format(time.RFC822Z))
 }
 
@@ -89,13 +90,13 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	var thedate time.Time
+	var currentTime time.Time
 	for rows.Next() {
 
-		rows.Scan(&thedate)
+		rows.Scan(&currentTime)
 	}
 	rows.Close()
-	fmt.Printf("\nCurrent time in ATP is %s\n\n", thedate.In(timezone).Format(time.RFC822Z))
+	fmt.Printf("\nCurrent time in ATP is %s\n\n", currentTime.In(timezone).Format(time.RFC822Z))
 
 	// Select is used to query multiple rows
 	users := []User{}
@@ -111,7 +112,7 @@ func main() {
 	}
 
 	// Get is used for query a single row
-	user_name := "test"
+	user_name := "nui"
 	user := User{}
 	err = db.Get(&user, "SELECT * FROM nui.user2 WHERE user_name = &1 ORDER by id FETCH FIRST 100 ROWS ONLY", user_name)
 	if err != nil {
@@ -144,11 +145,11 @@ func main() {
 	result, err = tx.Exec(`
 	INSERT into nui.user2  
 	(user_name, email, hashed_password,is_admin,created_at,updated_at) 
-	values (&1,&2,&3,&4,&5,&6)`, "test", "test@test.com", "$2a$11$fTDn/IzGVYpj5C2P1QewPOZwxuVpsHjH3go0YORqfDDk/G7UhZWna", 0, updated_at, updated_at)
+	values (&1,&2,&3,&4,&5,&6)`, util.RandomName(), "test@test.com", "$2a$11$fTDn/IzGVYpj5C2P1QewPOZwxuVpsHjH3go0YORqfDDk/G7UhZWna", 0, updated_at, updated_at)
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Println("\nINSERT into nui.user2 (user_name, email, hashed_password,is_admin,created_at,updated_at) ...")
+	fmt.Println("\nINSERT into nui.user2 (user_name, email, ...")
 	printSqlResult(result)
 	// tx.Rollback()
 	tx.Commit()
