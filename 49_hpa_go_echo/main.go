@@ -38,10 +38,10 @@ func fib(n int64) int64 {
 
 func FiboGetHandler2(c echo.Context) error {
 	// Create response object
-	// fmt.Println(e.ParamNames())
-	// fmt.Println(e.ParamValues())
+	// fmt.Println(c.ParamNames())
+	// fmt.Println(c.ParamValues())
 	// to get query string parameters
-	// - e.Request.URL.Query().Get("bar")
+	// - c.Request.URL.Query().Get("bar")
 	var n int64
 	var err error
 
@@ -52,7 +52,7 @@ func FiboGetHandler2(c echo.Context) error {
 		return c.String(http.StatusNotAcceptable, "n should be between 0 and 40")
 	}
 	f := fib(n)
-	fmt.Println(f)
+	// fmt.Println(f)
 	returnString := fmt.Sprintf("%d", f)
 	return c.String(http.StatusOK, returnString)
 
@@ -65,7 +65,7 @@ func main() {
 	// Middleware
 	// e.Use(middleware.Logger())
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "method=${method}, uri=${uri}, status=${status},latency=${latency_human}\n",
+		Format: "method=${method}, uri=${uri}, status=${status}, latency=${latency_human}\n",
 	}))
 	e.Use(middleware.Gzip())
 	e.Use(middleware.Recover())
@@ -80,7 +80,7 @@ func main() {
 
 	// Start echo and handle errors
 	// Start server
-	port := 80
+	port := 8002
 	if err := e.Start(fmt.Sprintf(":%d", port)); err != nil {
 		e.Logger.Fatal(err.Error())
 	}

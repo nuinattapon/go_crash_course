@@ -16,7 +16,7 @@ func init() {
 }
 func main() {
 	start := time.Now()
-	url := []string{"https://go.nattapon.me", "https://go.nattapon.me/ping", "https://go.nattapon.me/version", "https://go.nattapon.me/json"}
+	url := []string{"http://rpi4:3000/fibo/32", "http://rpi4:3000/fibo/32", "http://rpi4:3000/fibo/32", "http://rpi4:3000/fibo/32"}
 
 	ch := make(chan string)
 	for _, url := range url {

@@ -1,8 +1,8 @@
 ### Ping
-GET http://localhost:80/ping HTTP/1.1
+GET http://rpi4:3000/ping HTTP/1.1
 ### Version
-GET http://localhost:80/version HTTP/1.1
+GET http://rpi4:3000/version HTTP/1.1
 ### Hello
-GET http://localhost:80/hello HTTP/1.1
+GET http://rpi4:3000/hello HTTP/1.1
 ### GET fibbonaci 
-GET http://localhost:80/fibo/30 HTTP/1.1
+GET http://rpi4:3000/fibo/27 HTTP/1.1
