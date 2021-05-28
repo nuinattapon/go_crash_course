@@ -11,6 +11,3 @@ Now we have these files in the repo
 06_comparing_floats  13_interfaces  21_websocket  29_channels   38_runner             46_strconv    README.md
 06_conditionals      14_web         22_module     30_channels   39_work               47_sqlx_orcl  test_folder
 ```
-
-## Add more line
-This line is from local repo
