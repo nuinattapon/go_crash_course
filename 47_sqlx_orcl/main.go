@@ -137,11 +137,12 @@ func main() {
 	fmt.Println("\nUPDATE nui.user2 set updated_at = &1")
 	printSqlResult(result)
 
-	// result, err = tx.Exec("DELETE from nui.user2 where user_name = 'test'")
-	// if err != nil {
-	// 	panic(err.Error())
-	// }
-	// printSqlResult(result)
+	result, err = tx.Exec("DELETE from nui.user2 where user_name = 'lsfm'")
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Println("\nDELETE from nui.user2 where user_name = 'lsfm'")
+	printSqlResult(result)
 	result, err = tx.Exec(`
 	INSERT into nui.user2  
 	(user_name, email, hashed_password,is_admin,created_at,updated_at) 
