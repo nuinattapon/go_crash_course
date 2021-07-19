@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: hello-pod
+  name: hello
+spec:
+  containers:
+    - image: gcr.io/nattapon/hello-go:latest
+      name: hello
+      ports:
+        - containerPort: 8888
+      resources:
+        requests:
+          memory: "10Mi"
+          cpu: "50m"
+        limits:
+          memory: "20Mi"
+          cpu: "100m"
+      livenessProbe:
+        httpGet:
+          path: /live
+          port: 8888
+        initialDelaySeconds: 5
+        periodSeconds: 10
+      readinessProbe:
+        httpGet:
+          path: /ready
+          port: 8888
+        initialDelaySeconds: 5
+        periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: hello-pod
+  name: hello
+spec:
+  type: LoadBalancer
+  ports:
+    - nodePort: 31001
+      port: 8888
+      protocol: TCP
+      targetPort: 8888
+  selector:
+    app: hello-pod
