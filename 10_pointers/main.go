@@ -10,7 +10,7 @@ func main() {
 	// Shorthand
 	// b := &a
 
-	fmt.Printf("Value of'a' is %d and value of 'b' is 0x%X\n", a, b)
+	fmt.Printf("Value of 'a' is %d and value of 'b' is 0x%X\n", a, b)
 	fmt.Printf("Type of 'a' is %T\n", a)
 
 	fmt.Printf("Type of 'b' is %T\n", b)
