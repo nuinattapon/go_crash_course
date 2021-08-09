@@ -25,3 +25,6 @@ node_modules/
 
 # certificates
 certs/
+
+# __debug_bin
+__debug_bin
