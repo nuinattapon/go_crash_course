@@ -2,7 +2,7 @@
 GET http://rpi4:3000/ HTTP/1.1
 
 ### POST login successfully
-### curl -X POST localhost:1323/login -d "username=jon&password=nope"
+### curl -X POST localhost:1323/login -d "username=jon&password=password"
 POST http://rpi4:3000/login
 Content-Type: application/x-www-form-urlencoded; charset=UTF-8
 
@@ -14,12 +14,15 @@ POST http://rpi4:3000/login
 Content-Type: application/x-www-form-urlencoded; charset=UTF-8
 
 username=jon&password=pwd
+
 ### GET private
+### curl localhost:1323/private -H "Authorization: Bearer "
 GET http://rpi4:3000/private HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwNDU0ODczLCJuYW1lIjoiSm9uIERvZSJ9.WPVYh9_-sDL0G8cL_v-Us8vPcmanbZe3rLEPIZsalbnxSWo4tb7UbHqao85x_HeCKNGEPrpajQA4GC7P3AsRMw
 
 ### GET admin while admin is true in token
+### curl localhost:1323/admin -H "Authorization: Bearer "
 GET http://rpi4:3000/admin HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjIwNDU0ODczLCJuYW1lIjoiSm9uIERvZSJ9.WPVYh9_-sDL0G8cL_v-Us8vPcmanbZe3rLEPIZsalbnxSWo4tb7UbHqao85x_HeCKNGEPrpajQA4GC7P3AsRMw
@@ -28,3 +31,8 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZ
 GET http://rpi4:3000/admin HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTYyMDQ1NTA5MywibmFtZSI6IkpvbiBEb2UifQ.To8nsjd9dazcHK2MwsqhKjQJw9cWjE6pMzvQ3v0SpOmfxERTmZ4iQsbeVrIbPNwnMhKnQvYq0gtYHVX0T5VK1Q
+
+### 
+### curl localhost:1323/private -H "Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTYyOTYyNjQ2MywibmFtZSI6IkpvbiBEb2UifQ.XTAf5fjSqDpYM7ickspXSK0F8eu8vsEwoPOCGvsBgIjn_cyxLYjWN1Ts-uCPSiZ1XN0a4S_6sof7yU-BhEyHrg"
+###  
+### curl localhost:1323/admin -H "Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTYyOTYyNjQ2MywibmFtZSI6IkpvbiBEb2UifQ.XTAf5fjSqDpYM7ickspXSK0F8eu8vsEwoPOCGvsBgIjn_cyxLYjWN1Ts-uCPSiZ1XN0a4S_6sof7yU-BhEyHrg"
