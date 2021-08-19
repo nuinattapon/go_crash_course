@@ -16,7 +16,7 @@ func init() {
 }
 func main() {
 	start := time.Now()
-	url := []string{"http://rpi4:3000/fibo/32", "http://rpi4:3000/fibo/32", "http://rpi4:3000/fibo/32", "http://rpi4:3000/fibo/32"}
+	url := []string{"http://localhost:3000/fibo/32", "http://localhost:3000/fibo/32", "http://localhost:3000/fibo/32", "http://localhost:3000/fibo/32"}
 
 	ch := make(chan string)
 	for _, url := range url {

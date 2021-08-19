@@ -14,7 +14,7 @@ func main() {
 	}
 
 	// else if
-	color := "red"
+	color := "green"
 
 	if color == "red" {
 		fmt.Println("color is red")

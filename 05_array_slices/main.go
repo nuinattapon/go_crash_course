@@ -27,8 +27,8 @@ func main() {
 	b := a
 	b[1] = 5
 	fmt.Printf("%T\n", a)
-	fmt.Printf("%T\n", b)
 	fmt.Println(a)
+	fmt.Printf("%T\n", b)
 	fmt.Println(b)
 
 }
